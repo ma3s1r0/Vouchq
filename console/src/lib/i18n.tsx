@@ -163,6 +163,25 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "inventory.sources": { en: "sources", ko: "개 소스" },
   "inventory.empty": { en: "No assets match the current filters.", ko: "현재 필터에 맞는 자산이 없습니다." },
 
+  // group one-click install (MA3-139)
+  "install.action": { en: "Install", ko: "설치" },
+  "install.title": { en: "Install vouched skills", ko: "보증된 스킬 설치" },
+  "install.subtitle": { en: "Installs only approved, pinned skills from", ko: "승인·박제된 스킬만 설치합니다 —" },
+  "install.run": { en: "Run this in your project root:", ko: "프로젝트 루트에서 실행하세요:" },
+  "install.copy": { en: "Copy", ko: "복사" },
+  "install.copied": { en: "Copied to clipboard.", ko: "클립보드에 복사했습니다." },
+  "install.copyFailed": { en: "Couldn't copy — select and copy manually.", ko: "복사하지 못했습니다. 직접 선택해 복사하세요." },
+  "install.authNote": { en: "Replace EMAIL:PASSWORD with your vouchq credentials.", ko: "EMAIL:PASSWORD 를 본인 vouchq 계정 정보로 바꾸세요." },
+  "install.willInstall": { en: "Will install", ko: "설치 대상" },
+  "install.skills": { en: "skill(s)", ko: "개 스킬" },
+  "install.target": { en: "into", ko: "→ 설치 위치" },
+  "install.verifyNote": { en: "Each file is hash-verified against the pinned version before writing.", ko: "각 파일은 박제된 버전 해시로 검증한 뒤 기록됩니다." },
+  "install.excluded": { en: "excluded (not approved):", ko: "제외됨(미승인):" },
+  "install.mcpNote": { en: "MCP tools in this source aren't installable here yet.", ko: "이 소스의 MCP 도구는 아직 여기서 설치할 수 없습니다." },
+  "install.none": { en: "No approved skills to install in this source yet.", ko: "이 소스에 설치할 승인된 스킬이 아직 없습니다." },
+  "install.close": { en: "Close", ko: "닫기" },
+  "install.unresolved": { en: "Source not resolved — can't generate an install.", ko: "소스를 확인할 수 없어 설치를 생성할 수 없습니다." },
+
   // status badge labels
   "status.APPROVED": { en: "APPROVED", ko: "승인됨" },
   "status.PENDING": { en: "PENDING", ko: "대기 중" },

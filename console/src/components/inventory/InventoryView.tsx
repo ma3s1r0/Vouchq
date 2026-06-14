@@ -16,6 +16,7 @@ import { RiskMeter } from "./RiskMeter";
 import { Onboarding } from "@/components/shell/Onboarding";
 import { Pager } from "@/components/shell/Pager";
 import { Select } from "@/components/shell/Select";
+import { InstallModal } from "./InstallModal";
 import { useToast } from "@/lib/feedback";
 import { useT } from "@/lib/i18n";
 
@@ -73,6 +74,9 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
   // A repo registers many skills, so group the inventory by source by default
   // (MA3-135); a toggle drops back to the flat, paginated list.
   const [grouped, setGrouped] = useState(true);
+  // The source group whose install modal is open (MA3-139), or null.
+  const [installGroup, setInstallGroup] =
+    useState<{ label: string; sourceId: string | null; items: InventoryItem[] } | null>(null);
   // Any filter/search change returns to the first page.
   useEffect(() => {
     setPage(0);
@@ -308,7 +312,25 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
                 <span className="font-mono text-[11px] text-dim">
                   {g.items.length} {t("inventory.assets")}
                 </span>
-                <span className="ml-auto flex items-center gap-2.5">{groupChips(g.items)}</span>
+                <span className="ml-auto flex items-center gap-2.5">
+                  {groupChips(g.items)}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      // Don't toggle the <details> when opening the modal.
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setInstallGroup({
+                        label: g.label,
+                        sourceId: g.items[0]?.sourceId ?? null,
+                        items: g.items,
+                      });
+                    }}
+                    className="rounded-md border border-border-strong px-2.5 py-1 text-[12px] font-semibold text-text hover:border-primary"
+                  >
+                    {t("install.action")}
+                  </button>
+                </span>
               </summary>
               <table className="w-full border-collapse text-[13px]">
                 {tableHead(false)}
@@ -327,6 +349,10 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
           </div>
           <Pager page={page} pageSize={PAGE_SIZE} total={filtered.length} onPage={setPage} />
         </>
+      )}
+
+      {installGroup && (
+        <InstallModal group={installGroup} onClose={() => setInstallGroup(null)} />
       )}
     </div>
   );

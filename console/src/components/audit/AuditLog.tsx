@@ -16,6 +16,7 @@ const CHIP: Record<string, string> = {
   SOURCE_CONNECTED: "bg-primary/[0.14] text-primary",
   SOURCE_DELETED: "bg-crit/[0.14] text-crit",
   POLICY_APPLIED: "bg-drift/[0.14] text-drift",
+  SKILL_INSTALL_SERVED: "bg-primary/[0.14] text-primary",
   SUPPRESSION_CREATED: "bg-muted/[0.14] text-muted",
   SUPPRESSION_DELETED: "bg-muted/[0.14] text-muted",
   MEMBER_INVITED: "bg-muted/[0.14] text-muted",
@@ -33,6 +34,7 @@ const KNOWN_ACTIONS = [
   "POLICY_APPLIED",
   "SUPPRESSION_CREATED",
   "SUPPRESSION_DELETED",
+  "SKILL_INSTALL_SERVED",
 ];
 
 const PAGE_SIZE = 50;
