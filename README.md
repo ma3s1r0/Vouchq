@@ -1,7 +1,7 @@
 # Vouchq
 
-> **A trust registry and governance plane for the MCP servers, Skills, and Tools your AI agents depend on.**
-> Register · Verify · Pin (박제) · Audit.
+> **Private trust registry for MCP tools. Approve once, pin cryptographically, detect rug-pulls forever.**
+> An approved MCP server or Skill can silently change its tool definitions *after* you trust it. Vouchq snapshots the approved definition, pins it by SHA-256 (박제), and raises a drift event the moment the live definition diverges — with a tamper-evident audit trail. Register · Scan · Approve & Pin · Detect drift · Audit.
 
 [![Website](https://img.shields.io/badge/website-vouchq.is--a.dev-388BFD)](https://vouchq.is-a.dev)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-3FB950)](LICENSE)
