@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useT } from "@/lib/i18n";
 
@@ -14,7 +13,6 @@ import { useT } from "@/lib/i18n";
  * Dev bootstrap: admin@vouchq.local / admin
  */
 export default function LoginPage() {
-  const router = useRouter();
   const { t } = useT();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +26,11 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await api.login({ email, password });
-      router.replace("/dashboard");
+      // Full navigation (not router.replace): AuthProvider only fetches /me on
+      // mount, so a client-side transition would leave the app in a stale
+      // unauthenticated state (sidebar "connecting…", role-gated) until a manual
+      // refresh. A real load re-establishes the session cleanly.
+      window.location.assign("/dashboard");
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes("401")) {
