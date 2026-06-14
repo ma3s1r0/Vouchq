@@ -59,7 +59,7 @@ Every register, scan, approve, block, and drift event is written to an **append-
 Spring Security with **Admin / Member / Viewer** roles. All data is isolated by `org_id`, enforced at the query layer, so multiple teams or tenants share one deployment without leaking across boundaries.
 
 ### Distribution / install
-Developers pull only **vouched (approved)** capabilities — never the live upstream. From the console, Skills install as pinned files and MCP servers install as vouched connection configs (*"Add to Claude / Add to Codex"*). Vouchq issues the trusted artifact; it does not sit inline in the request path.
+Developers pull only **vouched (approved)** capabilities — never the live upstream. A repo registers many Skills, so the inventory groups them by source and each group gets a one-click **Install** that emits a copy-paste `curl … | sh`: the generated script fetches each approved file from Vouchq (the exact **pinned** bytes), re-verifies its SHA-256 before writing, and drops it into `.claude/skills/`. Only `APPROVED` + pinned skills are served — pending / drifted / blocked are reported and skipped — and every install is recorded on the WORM audit log as `SKILL_INSTALL_SERVED`. MCP servers install as vouched connection configs (*"Add to Claude / Add to Codex"*). Because the bytes come from Vouchq's pinned snapshot rather than a fresh `git clone`, a consumer never re-pulls a rug-pulled upstream. Vouchq issues the trusted artifact; it does not sit inline in the request path.
 
 ---
 
@@ -99,7 +99,7 @@ wrapper around the cores can't be offered as a closed SaaS). See **[`LICENSING.m
   └─────────────────────────────────────────────────────────────────────────┘
                               │  only approved + pinned
   ┌── Distribution (door out)─▼─────────────────────────────────────────────┐
-  │   Add to Claude / Add to Codex   (pinned Skill files · vouched MCP cfg)  │
+  │   One-click install  ·  curl|sh, hash-verified  ·  vouched MCP config    │
   └─────────────────────────────────────────────────────────────────────────┘
 ```
 
