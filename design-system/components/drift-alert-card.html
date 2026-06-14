@@ -1,0 +1,114 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Drift alert card — drift list row</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD;--ok:#3FB950;--warn:#D29922;--drift:#DB6D28;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:24px}
+  .list{display:flex;flex-direction:column;gap:10px;max-width:720px}
+  .card{display:grid;grid-template-columns:3px 1fr auto;border:1px solid var(--border);border-radius:11px;
+        background:var(--surface);overflow:hidden}
+  .card .stripe{background:var(--drift)}
+  .card.crit .stripe{background:var(--crit)}
+  .main{padding:13px 16px;min-width:0}
+  .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .tool{font-size:14px;font-weight:600}
+  .kind{font-family:'IBM Plex Mono';font-size:10px;color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:1px 6px}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.03em;
+         background:rgba(219,109,40,.14);color:var(--drift)}
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--drift);box-shadow:0 0 0 3px rgba(219,109,40,.18);
+              animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(219,109,40,.18)}50%{box-shadow:0 0 0 5px rgba(219,109,40,.05)}}
+  .sev{margin-left:auto;font-family:'IBM Plex Mono';font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+       padding:2px 8px;border-radius:4px}
+  .sev.high{background:rgba(248,81,73,.13);color:var(--crit)}
+  .sev.med{background:rgba(210,153,34,.14);color:var(--warn)}
+  .summary{font-size:12.5px;color:var(--muted);margin-top:7px;line-height:1.55;
+           overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .summary b{color:var(--text);font-weight:600}
+  .hashes{display:flex;align-items:center;gap:8px;margin-top:9px;font-family:'IBM Plex Mono';font-size:11px}
+  .chip{border:1px solid var(--border);border-radius:5px;padding:2px 7px;color:var(--muted);background:#0D1119}
+  .chip.pinned{color:var(--ok);border-color:rgba(63,185,80,.3)}
+  .chip.obs{color:var(--drift);border-color:rgba(219,109,40,.3)}
+  .arr{color:var(--dim)}
+  .actions{display:flex;flex-direction:column;justify-content:center;gap:6px;padding:13px 16px;border-left:1px solid var(--border);background:#0D1119}
+  button{font-family:inherit;font-size:12px;font-weight:600;border-radius:7px;padding:6px 12px;border:1px solid transparent;cursor:pointer;white-space:nowrap;text-align:left}
+  .reapprove{background:rgba(63,185,80,.12);color:var(--ok);border-color:rgba(63,185,80,.32)}
+  .reapprove:hover{background:rgba(63,185,80,.2)}
+  .block{background:transparent;color:var(--crit);border-color:rgba(248,81,73,.4)}
+  .block:hover{background:rgba(248,81,73,.12)}
+  .view{background:transparent;color:var(--muted);border-color:var(--border)}
+  .view:hover{color:var(--text);border-color:var(--border-strong)}
+</style>
+</head>
+<body>
+  <div class="list">
+
+    <div class="card crit">
+      <div class="stripe"></div>
+      <div class="main">
+        <div class="top">
+          <span class="tool">helpful-helper</span><span class="kind">SKILL</span>
+          <span class="badge"><span class="dot"></span>DRIFTED</span>
+          <span class="sev high">High</span>
+        </div>
+        <div class="summary"><b>scripts/setup.sh</b> changed — added an outbound <b>curl</b> exfiltrating <b>~/.ssh/id_rsa</b></div>
+        <div class="hashes">
+          <span class="chip pinned">pinned a1b2c3d4</span><span class="arr">→</span><span class="chip obs">observed 9f8e7d6c</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="reapprove">Re-approve</button>
+        <button class="block">Block</button>
+        <button class="view">View diff</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stripe"></div>
+      <div class="main">
+        <div class="top">
+          <span class="tool">db.query</span><span class="kind">MCP_TOOL</span>
+          <span class="badge"><span class="dot"></span>DRIFTED</span>
+          <span class="sev med">Medium</span>
+        </div>
+        <div class="summary"><b>parameters</b> schema changed — new optional field <b>raw_sql</b> added to input</div>
+        <div class="hashes">
+          <span class="chip pinned">pinned 4c5d6e7f</span><span class="arr">→</span><span class="chip obs">observed b2a90c11</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="reapprove">Re-approve</button>
+        <button class="block">Block</button>
+        <button class="view">View diff</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stripe"></div>
+      <div class="main">
+        <div class="top">
+          <span class="tool">greeter</span><span class="kind">SKILL</span>
+          <span class="badge"><span class="dot"></span>DRIFTED</span>
+          <span class="sev med">Medium</span>
+        </div>
+        <div class="summary"><b>description</b> reworded; <b>permissions</b> unchanged — likely benign, needs re-pin</div>
+        <div class="hashes">
+          <span class="chip pinned">pinned a1b2c3d4</span><span class="arr">→</span><span class="chip obs">observed 77ef01aa</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="reapprove">Re-approve</button>
+        <button class="block">Block</button>
+        <button class="view">View diff</button>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

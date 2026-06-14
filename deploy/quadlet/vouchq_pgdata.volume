@@ -1,0 +1,6 @@
+# Quadlet volume unit — persistent Postgres data for Vouchq.
+[Unit]
+Description=Vouchq Postgres data volume
+
+[Volume]
+VolumeName=vouchq_pgdata

@@ -1,0 +1,58 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Skeleton loading — dark placeholders</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--text:#E6EDF3;
+        --muted:#8B97A8;--dim:#5A6678;--blue:#388BFD}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:24px}
+  h1{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:0 0 14px}
+  .wrap{max-width:680px}
+  /* shimmer primitive */
+  .sk{position:relative;overflow:hidden;background:var(--surface-2);border-radius:5px;
+      animation:pulse 1.8s ease-in-out infinite}
+  .sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+             background:linear-gradient(90deg,transparent,rgba(56,139,253,.07),transparent);
+             animation:shimmer 1.8s ease-in-out infinite}
+  @keyframes shimmer{100%{transform:translateX(100%)}}
+  @keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+  /* stat cards */
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+  .card{border:1px solid var(--border);border-radius:11px;background:var(--surface);padding:16px}
+  .card .lbl{height:9px;width:54%}
+  .card .num{height:24px;width:40%;margin-top:12px}
+  .card .sub{height:8px;width:68%;margin-top:12px}
+  /* table */
+  .tbl{border:1px solid var(--border);border-radius:11px;overflow:hidden;background:var(--surface)}
+  .thead{background:#0D1119;border-bottom:1px solid var(--border);padding:12px 16px}
+  .thead .sk{height:8px;width:120px}
+  .trow{display:grid;grid-template-columns:1.6fr 70px 1fr 110px;gap:16px;align-items:center;
+        padding:14px 16px;border-bottom:1px solid var(--border)}
+  .trow:last-child{border-bottom:0}
+  .trow .a{height:11px}.trow .b{height:18px;border-radius:999px}.trow .c{height:9px}
+  .trow .w1{width:78%}.trow .w2{width:52%}.trow .w3{width:90%}.trow .w4{width:60%}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Loading · inventory</h1>
+    <div class="stats">
+      <div class="card"><div class="sk lbl"></div><div class="sk num"></div><div class="sk sub"></div></div>
+      <div class="card"><div class="sk lbl"></div><div class="sk num"></div><div class="sk sub"></div></div>
+      <div class="card"><div class="sk lbl"></div><div class="sk num"></div><div class="sk sub"></div></div>
+    </div>
+    <div class="tbl">
+      <div class="thead"><div class="sk"></div></div>
+      <div class="trow"><div class="sk a w1"></div><div class="sk b"></div><div class="sk c w3"></div><div class="sk c w4"></div></div>
+      <div class="trow"><div class="sk a w2"></div><div class="sk b"></div><div class="sk c w4"></div><div class="sk c w3"></div></div>
+      <div class="trow"><div class="sk a w1"></div><div class="sk b"></div><div class="sk c w3"></div><div class="sk c w4"></div></div>
+      <div class="trow"><div class="sk a w2"></div><div class="sk b"></div><div class="sk c w4"></div><div class="sk c w3"></div></div>
+      <div class="trow"><div class="sk a w1"></div><div class="sk b"></div><div class="sk c w3"></div><div class="sk c w4"></div></div>
+    </div>
+  </div>
+</body>
+</html>

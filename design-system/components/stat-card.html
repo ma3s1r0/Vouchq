@@ -1,0 +1,54 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stat card — dashboard metrics</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--text:#E6EDF3;
+        --muted:#8B97A8;--dim:#5A6678;--ok:#3FB950;--warn:#D29922;--drift:#DB6D28;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;max-width:900px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+        position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--dim))}
+  .label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .value{font-size:34px;font-weight:600;letter-spacing:-.02em;margin:10px 0 6px;
+         font-family:'IBM Plex Mono',monospace}
+  .delta{font-size:12px;color:var(--dim)}
+  .delta b{font-weight:600}
+  .up{color:var(--warn)} .crit{color:var(--crit)}
+  .c-assets{--accent:#388BFD}
+  .c-pending{--accent:#D29922}
+  .c-drift{--accent:#DB6D28}
+  .c-blocked{--accent:#F85149}
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="card c-assets">
+      <div class="label">Registered assets</div>
+      <div class="value">128</div>
+      <div class="delta">94 approved · 28 pending · 6 blocked</div>
+    </div>
+    <div class="card c-pending">
+      <div class="label">Approval queue</div>
+      <div class="value">6</div>
+      <div class="delta up"><b>▲ 2</b> since yesterday</div>
+    </div>
+    <div class="card c-drift">
+      <div class="label">Unresolved drift</div>
+      <div class="value">9</div>
+      <div class="delta crit"><b>4 critical</b> · 5 warn</div>
+    </div>
+    <div class="card c-blocked">
+      <div class="label">Blocked</div>
+      <div class="value">6</div>
+      <div class="delta">last 30 days</div>
+    </div>
+  </div>
+</body>
+</html>

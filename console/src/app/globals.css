@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/*
+ * "Control Room" dark design tokens.
+ * Source of truth: design-system/foundations/colors.html + components/*.html.
+ * Encoded as Tailwind v4 theme tokens so they're usable as utilities, e.g.
+ * `bg-bg`, `text-muted`, `border-border`, `text-primary`, `bg-surface-2`.
+ * Font CSS vars (--font-sans / --font-mono) are provided by next/font in layout.tsx.
+ */
+@theme {
+  --color-bg: #0b0e14;
+  --color-surface: #141922;
+  --color-surface-2: #1c2230;
+  --color-sidebar: #0d1119;
+  --color-border: #2a3242;
+  --color-border-strong: #3a4459;
+  --color-text: #e6edf3;
+  --color-muted: #8b97a8;
+  /* Lifted from #5a6678 (~3.3:1, AA fail) to ~4.6:1 on the bg — dim is used for
+     load-bearing secondary text incl. the audit hash lines (MA3-115). */
+  --color-dim: #6e7c90;
+  --color-primary: #388bfd;
+  --color-approved: #3fb950;
+  --color-warn: #d29922;
+  --color-drift: #db6d28;
+  --color-blocked: #f85149;
+  --color-crit: #f85149;
+
+  --font-sans: var(--font-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/*
+ * Tailwind v4's Preflight resets buttons to `cursor: default`, so interactive
+ * controls didn't look clickable on hover. Restore the pointer for enabled
+ * buttons / links-as-buttons; disabled controls show not-allowed.
+ */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+summary {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Visible keyboard focus everywhere (MA3-115 / WCAG 2.4.7). Mouse clicks don't
+   trigger :focus-visible, so this only shows for keyboard/AT navigation. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* DRIFTED status pulses to draw attention (see status-badge.html). */
+@keyframes drift-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(219, 109, 40, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(219, 109, 40, 0.28);
+  }
+}
+.drift-pulse {
+  animation: drift-pulse 1.8s ease-in-out infinite;
+}

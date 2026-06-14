@@ -1,0 +1,97 @@
+<!-- @dsCard group="Foundations" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Form fields — primitives</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD;--ok:#3FB950}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,260px));gap:18px 22px;max-width:560px}
+  .field{min-width:0}
+  label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+        font-weight:600;margin:0 0 7px}
+  .wrap{position:relative;display:flex;align-items:center}
+  input[type=text],select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;
+        padding:10px 12px;font-size:13px;color:var(--text);font-family:'IBM Plex Mono',monospace}
+  input::placeholder{color:var(--dim)}
+  input[type=text]:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,139,253,.16)}
+  select{appearance:none;font-family:'IBM Plex Sans';cursor:pointer;
+         background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%238B97A8' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+         background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+  .lock{position:absolute;right:11px;display:flex;align-items:center;gap:5px;color:var(--ok);font-size:10px;
+        font-weight:600;font-family:'IBM Plex Sans';letter-spacing:.04em;pointer-events:none}
+  .lock svg{width:12px;height:12px;stroke:var(--ok);fill:none;stroke-width:2}
+  .masked input{letter-spacing:.18em;padding-right:96px}
+  .helper{font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.5}
+  /* toggle */
+  .tg{position:relative;width:38px;height:21px;cursor:pointer;display:inline-block}
+  .tg input{opacity:0;width:0;height:0;position:absolute}
+  .track{position:absolute;inset:0;background:var(--surface-2);border:1px solid var(--border-strong);
+         border-radius:999px;transition:.15s}
+  .knob{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--dim);transition:.15s}
+  .tg input:checked + .track{background:rgba(63,185,80,.22);border-color:rgba(63,185,80,.5)}
+  .tg input:checked + .track .knob{transform:translateX(17px);background:var(--ok)}
+  .ctl{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text)}
+  /* checkbox */
+  .cb{position:relative;display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:13px}
+  .cb input{opacity:0;width:0;height:0;position:absolute}
+  .box{width:17px;height:17px;border-radius:5px;background:var(--bg);border:1px solid var(--border-strong);
+       display:grid;place-items:center;transition:.12s}
+  .box svg{width:11px;height:11px;stroke:#06121F;fill:none;stroke-width:3;opacity:0}
+  .cb input:checked + .box{background:var(--blue);border-color:var(--blue)}
+  .cb input:checked + .box svg{opacity:1}
+</style>
+</head>
+<body>
+  <h1>Form fields · primitives</h1>
+  <div class="grid">
+
+    <div class="field">
+      <label for="t1">Text input</label>
+      <div class="wrap"><input id="t1" type="text" value="acme/agent-tools"></div>
+    </div>
+
+    <div class="field">
+      <label for="t2">Encrypted secret</label>
+      <div class="wrap masked"><input id="t2" type="password" value="ghp_8x4kQ29pLrT0mZ7">
+        <span class="lock"><svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>ENCRYPTED</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="s1">Select</label>
+      <div class="wrap"><select id="s1">
+        <option>main</option><option>develop</option><option>release/2.4</option>
+      </select></div>
+    </div>
+
+    <div class="field">
+      <label>Toggle</label>
+      <div class="ctl">
+        <label class="tg"><input type="checkbox" checked><span class="track"><span class="knob"></span></span></label>
+        <span>Auto-block on drift</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Checkbox</label>
+      <label class="cb"><input type="checkbox" checked>
+        <span class="box"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+        Require re-approval after rescan</label>
+    </div>
+
+    <div class="field">
+      <label for="t3">Field with helper</label>
+      <div class="wrap"><input id="t3" type="text" placeholder="https://hooks.acme.io/…"></div>
+      <p class="helper">Stored encrypted at rest. Used read-only; never logged.</p>
+    </div>
+
+  </div>
+</body>
+</html>

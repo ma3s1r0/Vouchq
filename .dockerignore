@@ -1,0 +1,12 @@
+.git
+.gitignore
+.claude
+.gradle
+.gradle-home
+build
+**/build
+docs
+*.md
+.idea
+.vscode
+.DS_Store

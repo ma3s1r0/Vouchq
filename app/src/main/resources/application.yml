@@ -1,0 +1,89 @@
+spring:
+  application:
+    name: vouchq
+
+  datasource:
+    # Defaults target the compose Postgres service; override via env for prod.
+    url: ${VOUCHQ_DB_URL:jdbc:postgresql://localhost:5432/vouchq}
+    username: ${VOUCHQ_DB_USER:vouchq}
+    password: ${VOUCHQ_DB_PASSWORD:vouchq}
+
+  jpa:
+    hibernate:
+      # Flyway owns the schema — never let Hibernate mutate it.
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+# Health endpoint backs the compose healthcheck. Nothing else is exposed, and
+# there is no outbound telemetry — self-hosted constraint (기획서 §7).
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+server:
+  port: ${VOUCHQ_PORT:8080}
+  shutdown: graceful
+
+# MA3-85 — scheduled re-scan + notification channels.
+# self-hosted constraint (기획서 §7): everything below is OFF by default, so a
+# fresh instance makes ZERO outbound calls. Enable per channel only when wanted.
+vouchq:
+  # MA3-89 — credential-at-rest encryption (기획서 §10). Source tokens are stored
+  # AES-GCM-encrypted in source.auth_ref. The key is base64 of a 16/24/32-byte AES
+  # key. UNSET = an insecure built-in DEV key (logged as a warning). Set
+  # VOUCHQ_CREDENTIALS_KEY before any real deployment. Stays in-process / no
+  # outbound calls (§7); a KMS/Vault adapter can replace CredentialCipher later.
+  credentials:
+    key: ${VOUCHQ_CREDENTIALS_KEY:}
+  rescan:
+    # Disabled by default — no background work, no re-clones, no alerts.
+    enabled: ${VOUCHQ_RESCAN_ENABLED:false}
+    # fixedDelay between runs (ms); default 1h. Next run starts only after the
+    # previous finishes, so runs never overlap.
+    interval-ms: ${VOUCHQ_RESCAN_INTERVAL_MS:3600000}
+    initial-delay-ms: ${VOUCHQ_RESCAN_INITIAL_DELAY_MS:60000}
+  notify:
+    webhook:
+      enabled: ${VOUCHQ_NOTIFY_WEBHOOK_ENABLED:false}
+      url: ${VOUCHQ_NOTIFY_WEBHOOK_URL:}
+    slack:
+      enabled: ${VOUCHQ_NOTIFY_SLACK_ENABLED:false}
+      webhook-url: ${VOUCHQ_NOTIFY_SLACK_WEBHOOK_URL:}
+    email:
+      # Also requires spring.mail.* to provide a MailSender.
+      enabled: ${VOUCHQ_NOTIFY_EMAIL_ENABLED:false}
+      from: ${VOUCHQ_NOTIFY_EMAIL_FROM:}
+      to: ${VOUCHQ_NOTIFY_EMAIL_TO:}
+
+  # MA3-86 — policy rule engine. Evaluated on each newly ingested + scanned tool.
+  # Rules are checked in order; the FIRST match wins (order strictest first).
+  # Conditions (ANDed; omit to ignore): min-risk-score, severity, finding-category,
+  # name-regex. Actions: AUTO_BLOCK (status -> BLOCKED) | HOLD (stay PENDING / flag).
+  # Local-only: no outbound calls, so this respects the §7 self-hosted constraint.
+  policy:
+    enabled: ${VOUCHQ_POLICY_ENABLED:true}
+    rules:
+      # High aggregate risk -> auto-block (catches the malicious-skill scenario).
+      - id: auto-block-high-risk
+        min-risk-score: 80
+        action: AUTO_BLOCK
+      # Any CRITICAL finding that didn't hit the score bar -> hold for review.
+      - id: hold-critical
+        severity: CRITICAL
+        action: HOLD

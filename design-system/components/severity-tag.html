@@ -1,0 +1,48 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Severity tag &amp; risk score</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--border:#2A3242;--text:#E6EDF3;--muted:#8B97A8;
+        --dim:#5A6678;--info:#388BFD;--warn:#D29922;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+     font-weight:600;margin:0 0 18px}
+  .stack{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:26px}
+  .tag{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:5px;
+       font-size:11px;font-weight:700;letter-spacing:.06em;font-family:'IBM Plex Mono',monospace}
+  .info{background:rgba(56,139,253,.13);color:var(--info)}
+  .warn{background:rgba(210,153,34,.14);color:var(--warn)}
+  .crit{background:rgba(248,81,73,.14);color:var(--crit)}
+  /* risk score meter */
+  .score{display:flex;align-items:center;gap:14px;background:var(--surface);
+         border:1px solid var(--border);border-radius:10px;padding:14px 16px;max-width:360px}
+  .num{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--crit);
+       line-height:1;min-width:46px}
+  .bar{flex:1}
+  .bar .label{font-size:11px;color:var(--muted);margin-bottom:7px;letter-spacing:.04em}
+  .track{height:6px;border-radius:999px;background:#0B0E14;border:1px solid var(--border);overflow:hidden}
+  .fill{height:100%;width:88%;background:linear-gradient(90deg,#D29922,#F85149)}
+</style>
+</head>
+<body>
+  <h1>Severity tag · risk score</h1>
+  <div class="stack">
+    <span class="tag info">INFO</span>
+    <span class="tag warn">WARN</span>
+    <span class="tag crit">CRITICAL</span>
+  </div>
+  <div class="score">
+    <div class="num">88</div>
+    <div class="bar">
+      <div class="label">RISK SCORE · 3 findings (1 critical)</div>
+      <div class="track"><div class="fill"></div></div>
+    </div>
+  </div>
+</body>
+</html>

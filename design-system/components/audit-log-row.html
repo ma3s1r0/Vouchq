@@ -1,0 +1,59 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Audit log — hash-chained entries</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--border:#2A3242;--text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;
+        --ok:#3FB950;--drift:#DB6D28;--crit:#F85149;--blue:#388BFD}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:24px}
+  .log{border:1px solid var(--border);border-radius:11px;overflow:hidden;max-width:680px;background:var(--surface)}
+  .cap{display:flex;align-items:center;gap:8px;padding:11px 16px;border-bottom:1px solid var(--border);background:#0D1119;
+       font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .cap .ok{margin-left:auto;color:var(--ok);display:inline-flex;align-items:center;gap:6px;letter-spacing:0;text-transform:none;font-weight:500}
+  .row{display:grid;grid-template-columns:128px 18px 1fr;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border)}
+  .row:last-child{border-bottom:0}
+  .time{font-family:'IBM Plex Mono';font-size:11px;color:var(--dim);line-height:1.5}
+  /* chain rail */
+  .rail{position:relative;display:flex;justify-content:center}
+  .rail::before{content:"";position:absolute;top:-11px;bottom:-11px;width:1px;background:var(--border)}
+  .node{width:9px;height:9px;border-radius:50%;background:var(--surface);border:1.5px solid var(--blue);z-index:1;margin-top:3px}
+  .body .act{font-size:13px;font-weight:600}
+  .act .chip{font-family:'IBM Plex Mono';font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;margin-right:7px;vertical-align:1px}
+  .approve{background:rgba(63,185,80,.14);color:var(--ok)} .drift{background:rgba(219,109,40,.14);color:var(--drift)}
+  .block{background:rgba(248,81,73,.14);color:var(--crit)} .scan{background:rgba(56,139,253,.14);color:var(--blue)}
+  .body .who{font-size:12px;color:var(--muted);margin-top:2px}
+  .hash{font-family:'IBM Plex Mono';font-size:10.5px;color:var(--dim);margin-top:5px}
+  .hash b{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="log">
+    <div class="cap">Audit log<span class="ok">● chain verified · 1,284 entries</span></div>
+    <div class="row">
+      <div class="time">2026-06-13<br>13:18:04Z</div>
+      <div class="rail"><span class="node"></span></div>
+      <div class="body"><div class="act"><span class="chip block">TOOL_BLOCKED</span>shell.exec</div>
+        <div class="who">by maria@acme · risk 96, dangerous command</div>
+        <div class="hash"><b>prev</b> 7c2a… → <b>entry</b> e91f…</div></div>
+    </div>
+    <div class="row">
+      <div class="time">2026-06-13<br>13:05:51Z</div>
+      <div class="rail"><span class="node"></span></div>
+      <div class="body"><div class="act"><span class="chip drift">DRIFT_DETECTED</span>helpful-helper</div>
+        <div class="who">by scheduler · pinned a1b2c3d4 ≠ observed 9f8e7d6c</div>
+        <div class="hash"><b>prev</b> 3b8d… → <b>entry</b> 7c2a…</div></div>
+    </div>
+    <div class="row">
+      <div class="time">2026-06-13<br>12:40:12Z</div>
+      <div class="rail"><span class="node"></span></div>
+      <div class="body"><div class="act"><span class="chip approve">TOOL_APPROVED</span>greeter</div>
+        <div class="who">by maria@acme · pinned sha256 a1b2c3d4</div>
+        <div class="hash"><b>prev</b> 0f1e… → <b>entry</b> 3b8d…</div></div>
+    </div>
+  </div>
+</body>
+</html>

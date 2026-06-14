@@ -1,0 +1,73 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Members &amp; roles — settings</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--text:#E6EDF3;--muted:#8B97A8;
+        --dim:#5A6678;--blue:#388BFD}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:24px}
+  .wrap{border:1px solid var(--border);border-radius:11px;overflow:hidden;max-width:680px;background:var(--surface)}
+  .head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:#0D1119}
+  .head .cap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .head .cap b{color:var(--text)}
+  .invite{margin-left:auto;font-family:inherit;font-size:13px;font-weight:600;background:var(--blue);color:#04101F;
+       border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  tbody td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:var(--surface-2)}
+  .who{display:flex;align-items:center;gap:11px}
+  .av{width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:600;font-family:'IBM Plex Mono';color:var(--text);background:var(--surface-2);
+      border:1px solid var(--border-strong,#3A4459)}
+  .who .em{font-family:'IBM Plex Mono';font-size:12.5px;color:var(--text)}
+  .chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;
+        letter-spacing:.04em}
+  .admin{background:rgba(56,139,253,.13);color:var(--blue)}
+  .member{background:rgba(139,151,168,.12);color:var(--muted)}
+  .viewer{background:rgba(90,102,120,.14);color:var(--dim)}
+  .last{font-family:'IBM Plex Mono';font-size:12px;color:var(--dim);text-align:right}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <span class="cap">Members · <b>5</b></span>
+      <button class="invite">Invite member</button>
+    </div>
+    <table>
+      <tbody>
+        <tr>
+          <td><div class="who"><span class="av">MR</span><span class="em">maria@acme.io</span></div></td>
+          <td><span class="chip admin">ADMIN</span></td>
+          <td class="last">2m ago</td>
+        </tr>
+        <tr>
+          <td><div class="who"><span class="av">JK</span><span class="em">jae@acme.io</span></div></td>
+          <td><span class="chip admin">ADMIN</span></td>
+          <td class="last">1h ago</td>
+        </tr>
+        <tr>
+          <td><div class="who"><span class="av">SL</span><span class="em">sam@acme.io</span></div></td>
+          <td><span class="chip member">MEMBER</span></td>
+          <td class="last">3d ago</td>
+        </tr>
+        <tr>
+          <td><div class="who"><span class="av">DV</span><span class="em">dev@acme.io</span></div></td>
+          <td><span class="chip member">MEMBER</span></td>
+          <td class="last">2w ago</td>
+        </tr>
+        <tr>
+          <td><div class="who"><span class="av">AU</span><span class="em">audit@acme.io</span></div></td>
+          <td><span class="chip viewer">VIEWER</span></td>
+          <td class="last">never</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!-- @dsCard group="Foundations" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Colors — Control Room</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{
+    --bg:#0B0E14; --surface:#141922; --surface-2:#1C2230;
+    --border:#2A3242; --text:#E6EDF3; --muted:#8B97A8; --dim:#5A6678;
+    --blue:#388BFD; --ok:#3FB950; --warn:#D29922; --crit:#F85149; --drift:#DB6D28;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+     color:var(--muted);font-weight:600;margin:0 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
+  .swatch{background:var(--surface);border:1px solid var(--border);
+          border-radius:8px;overflow:hidden}
+  .chip{height:62px;border-bottom:1px solid var(--border)}
+  .meta{padding:9px 12px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.5}
+  .meta .name{color:var(--text)}
+  .meta .hex{color:var(--dim)}
+</style>
+</head>
+<body>
+  <h1>Color tokens</h1>
+  <div class="grid" id="grid"></div>
+  <script>
+    const tokens = [
+      ['bg','#0B0E14'],['surface','#141922'],['surface-2','#1C2230'],
+      ['border','#2A3242'],['text','#E6EDF3'],['muted','#8B97A8'],['dim','#5A6678'],
+      ['blue · primary','#388BFD'],['ok · approved','#3FB950'],
+      ['warn','#D29922'],['drift','#DB6D28'],['crit · blocked','#F85149']
+    ];
+    document.getElementById('grid').innerHTML = tokens.map(([n,h]) => `
+      <div class="swatch">
+        <div class="chip" style="background:${h}"></div>
+        <div class="meta"><div class="name">${n}</div><div class="hex">${h}</div></div>
+      </div>`).join('');
+  </script>
+</body>
+</html>

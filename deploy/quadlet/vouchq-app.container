@@ -1,0 +1,33 @@
+# Quadlet unit for the Vouchq control-plane app (rootless systemd-managed Podman).
+# Waits for the DB, reads secrets from an EnvironmentFile, runs hardened
+# (read-only rootfs + tmpfs, no-new-privileges, all caps dropped — the image is
+# already non-root uid 1001). Bind the published port to loopback and front it
+# with a TLS-terminating reverse proxy. See docs/self-hosting.md.
+[Unit]
+Description=Vouchq control plane
+Requires=vouchq-db.service vouchq-network.service
+After=vouchq-db.service vouchq-network.service
+
+[Container]
+# Pin to a released tag in production instead of :latest.
+Image=localhost/vouchq-app:latest
+Network=vouchq.network
+PublishPort=127.0.0.1:8080:8080
+EnvironmentFile=%h/.config/vouchq/app.env
+# db.env / app.env supply VOUCHQ_DB_* etc.; the URL points at the db container.
+Environment=VOUCHQ_DB_URL=jdbc:postgresql://vouchq-db:5432/vouchq
+Environment=SPRING_PROFILES_ACTIVE=
+ReadOnly=true
+Tmpfs=/tmp
+NoNewPrivileges=true
+DropCapability=all
+HealthCmd=curl -fsS http://localhost:8080/actuator/health | grep -q '"status":"UP"'
+HealthInterval=15s
+HealthStartPeriod=45s
+HealthRetries=10
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

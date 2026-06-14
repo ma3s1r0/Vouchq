@@ -1,0 +1,110 @@
+# Production stack for self-hosted Vouchq (MA3-96): Postgres + backend (app) +
+# console. The console is the front door; it proxies /api → app over the
+# internal network, so the browser only ever talks to one origin. Differs from
+# the dev compose.yaml in ways that matter for a real deployment:
+#   - secrets/config come from an .env file (see .env.prod.example), never inline
+#   - Postgres is NOT published to the host — only the app reaches it over the
+#     internal network
+#   - the app runs read-only, no-new-privileges, with all Linux caps dropped
+#   - restart policy + graceful shutdown for unattended operation
+#   - SPRING_PROFILES_ACTIVE is empty: the demo/internal ingest triggers stay OFF
+#
+# Bring up:  docker compose -f compose.prod.yaml --env-file .env up -d --build
+# (Podman:   podman compose -f compose.prod.yaml --env-file .env up -d --build)
+#
+# Put a TLS-terminating reverse proxy in front of the console (127.0.0.1:3000).
+# Required secrets + first-boot admin are documented in .env.prod.example and the
+# README "Production (self-hosted, Docker Compose)" section.
+services:
+  db:
+    image: docker.io/library/postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${VOUCHQ_DB_NAME:-vouchq}
+      POSTGRES_USER: ${VOUCHQ_DB_USER:?set VOUCHQ_DB_USER in .env}
+      POSTGRES_PASSWORD: ${VOUCHQ_DB_PASSWORD:?set VOUCHQ_DB_PASSWORD in .env}
+    # No `ports:` — the database is never exposed to the host. Only the app
+    # container reaches it on the internal compose network.
+    volumes:
+      - vouchq_pgdata:/var/lib/postgresql/data:Z
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${VOUCHQ_DB_USER:-vouchq} -d ${VOUCHQ_DB_NAME:-vouchq}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: vouchq-app:${VOUCHQ_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      VOUCHQ_DB_URL: jdbc:postgresql://db:5432/${VOUCHQ_DB_NAME:-vouchq}
+      VOUCHQ_DB_USER: ${VOUCHQ_DB_USER:?set VOUCHQ_DB_USER in .env}
+      VOUCHQ_DB_PASSWORD: ${VOUCHQ_DB_PASSWORD:?set VOUCHQ_DB_PASSWORD in .env}
+      # AES key (base64, 32 bytes) for source-credential encryption at rest (MA3-89).
+      # REQUIRED in prod — without it the app falls back to an insecure built-in dev
+      # key and logs a warning. Generate: openssl rand -base64 32
+      VOUCHQ_CREDENTIALS_KEY: ${VOUCHQ_CREDENTIALS_KEY:?set VOUCHQ_CREDENTIALS_KEY in .env}
+      # First-boot ADMIN seed (only used while app_user is empty). Set both, then
+      # change the password in the console after first login.
+      VOUCHQ_ADMIN_EMAIL: ${VOUCHQ_ADMIN_EMAIL:?set VOUCHQ_ADMIN_EMAIL in .env}
+      VOUCHQ_ADMIN_PASSWORD: ${VOUCHQ_ADMIN_PASSWORD:?set VOUCHQ_ADMIN_PASSWORD in .env}
+      # Background re-scan (rug-pull detection) — opt in for prod.
+      VOUCHQ_RESCAN_ENABLED: ${VOUCHQ_RESCAN_ENABLED:-true}
+      # Notifications stay OFF unless explicitly configured (기획서 §7).
+      # Empty profile: no demo/internal ingest endpoints.
+      SPRING_PROFILES_ACTIVE: ""
+    ports:
+      # Loopback only — for ops/health checks. Browser traffic goes through the
+      # console (below); the app is not the public front door.
+      - "127.0.0.1:${VOUCHQ_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    # Hardening: the image already runs as non-root uid 1001; lock it down further.
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+
+  # Front door: the Next.js console. Proxies /api → app over the internal
+  # network (so the session cookie is first-party) and serves the UI. Put your
+  # TLS-terminating reverse proxy in front of this loopback port.
+  console:
+    image: vouchq-console:${VOUCHQ_VERSION:-latest}
+    build:
+      context: ./console
+      dockerfile: Dockerfile
+      # The proxy target is baked at build (Next evaluates rewrites() then); in
+      # this compose the backend is always the `app` service.
+      args:
+        API_PROXY_TARGET: http://app:8080
+    restart: unless-stopped
+    environment:
+      NEXT_TELEMETRY_DISABLED: "1"
+    ports:
+      - "127.0.0.1:${VOUCHQ_CONSOLE_PORT:-3000}:3000"
+    depends_on:
+      app:
+        condition: service_healthy
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  vouchq_pgdata:

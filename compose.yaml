@@ -1,0 +1,48 @@
+# Local dev stack: app + Postgres. Brings both up with `docker compose up`
+# (or `podman compose up` — same file, both runtimes). The console runs
+# separately in dev (`cd console && npm run dev`); the full containerized stack
+# incl. the console is compose.prod.yaml. Health: app waits for a healthy DB,
+# then exposes /actuator/health → 200 once Flyway has migrated. (MA3-69 완료 기준)
+services:
+  db:
+    image: docker.io/library/postgres:16-alpine
+    environment:
+      POSTGRES_DB: vouchq
+      POSTGRES_USER: vouchq
+      POSTGRES_PASSWORD: vouchq
+    ports:
+      - "5432:5432"
+    volumes:
+      # `:Z` relabels the volume for SELinux — required under rootless Podman.
+      - vouchq_pgdata:/var/lib/postgresql/data:Z
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vouchq -d vouchq"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      VOUCHQ_DB_URL: jdbc:postgresql://db:5432/vouchq
+      VOUCHQ_DB_USER: vouchq
+      VOUCHQ_DB_PASSWORD: vouchq
+      # Empty by default (no extra beans). Set VOUCHQ_PROFILES=demo to enable the
+      # guarded dev ingestion trigger (POST /api/internal/ingest) for MA3-75 e2e.
+      SPRING_PROFILES_ACTIVE: ${VOUCHQ_PROFILES:-}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+volumes:
+  vouchq_pgdata:

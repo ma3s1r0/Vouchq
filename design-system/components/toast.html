@@ -1,0 +1,57 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Toast — notifications</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD;--ok:#3FB950;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 18px}
+  .stack{display:flex;flex-direction:column;gap:10px;align-items:flex-end;max-width:380px;margin-left:auto}
+  .toast{width:100%;display:flex;align-items:flex-start;gap:10px;padding:11px 12px;
+         background:var(--surface);border:1px solid var(--border);border-left-width:3px;border-radius:9px;
+         box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .toast.ok{border-left-color:var(--ok)}
+  .toast.err{border-left-color:var(--crit)}
+  .toast.info{border-left-color:var(--blue)}
+  .ic{flex:0 0 18px;width:18px;height:18px;margin-top:1px}
+  .ic svg{width:18px;height:18px;fill:none;stroke-width:2}
+  .ok .ic svg{stroke:var(--ok)} .err .ic svg{stroke:var(--crit)} .info .ic svg{stroke:var(--blue)}
+  .msg{flex:1;min-width:0;line-height:1.45}
+  .msg .t{font-size:13px;font-weight:600}
+  .msg .d{font-size:12px;color:var(--muted);margin-top:2px}
+  .msg .d code{font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:11.5px}
+  .x{flex:0 0 auto;background:none;border:none;color:var(--dim);cursor:pointer;padding:2px;
+     line-height:1;font-size:15px;border-radius:5px}
+  .x:hover{color:var(--text);background:var(--surface-2)}
+</style>
+</head>
+<body>
+  <h1>Toast · notifications</h1>
+  <div class="stack">
+    <div class="toast ok">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+      <div class="msg"><div class="t">Greeter pinned</div>
+        <div class="d">Pinned greeter @ <code>a1b2c3d4</code></div></div>
+      <button class="x" aria-label="Dismiss">&times;</button>
+    </div>
+    <div class="toast err">
+      <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg></span>
+      <div class="msg"><div class="t">Block failed</div>
+        <div class="d">Could not write policy — registry unreachable</div></div>
+      <button class="x" aria-label="Dismiss">&times;</button>
+    </div>
+    <div class="toast info">
+      <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg></span>
+      <div class="msg"><div class="t">Scan queued</div>
+        <div class="d">Re-scanning <code>acme/agent-tools</code> @ main</div></div>
+      <button class="x" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
+</body>
+</html>

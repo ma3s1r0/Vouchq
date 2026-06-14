@@ -1,0 +1,45 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Filter toolbar — inventory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:24px}
+  .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--border);border-radius:11px;
+       background:var(--surface);padding:12px 14px;max-width:880px}
+  .search{position:relative;flex:1;min-width:220px}
+  .search input{width:100%;background:#0B0E14;border:1px solid var(--border);border-radius:8px;color:var(--text);
+       font-family:'IBM Plex Mono';font-size:12.5px;padding:8px 10px 8px 30px;outline:none}
+  .search input:focus{border-color:var(--border-strong)}
+  .search input::placeholder{color:var(--dim)}
+  .search .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:12px}
+  .sel{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);
+       border-radius:8px;padding:7px 10px;font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap}
+  .sel b{color:var(--text);font-weight:600}
+  .sel .car{color:var(--dim);font-size:9px}
+  .count{font-family:'IBM Plex Mono';font-size:12px;color:var(--dim);margin-left:auto;white-space:nowrap}
+  .count b{color:var(--text)}
+  .rescan{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:13px;font-weight:600;
+       background:var(--blue);color:#04101F;border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+  .rescan .sp{width:7px;height:7px;border-radius:50%;background:#04101F}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="search">
+      <span class="ic">⌕</span>
+      <input type="text" placeholder="search name, sha256, source…">
+    </div>
+    <span class="sel">Kind <b>SKILL</b> <span class="car">▾</span></span>
+    <span class="sel">Status <b>DRIFTED</b> <span class="car">▾</span></span>
+    <span class="sel">Risk <b>≥ WARN</b> <span class="car">▾</span></span>
+    <span class="count"><b>128</b> assets · <b>4</b> sources</span>
+    <button class="rescan"><span class="sp"></span>Rescan all</button>
+  </div>
+</body>
+</html>

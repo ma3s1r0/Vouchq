@@ -1,0 +1,78 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Approval queue item — pending</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD;--ok:#3FB950;--warn:#D29922;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 18px}
+  .item{max-width:620px;background:var(--surface);border:1px solid var(--border);border-radius:11px;
+        padding:16px 18px;position:relative;overflow:hidden}
+  .item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--dim)}
+  .top{display:flex;align-items:flex-start;gap:12px}
+  .name{font-size:15px;font-weight:600;font-family:'IBM Plex Mono',monospace}
+  .kind{display:inline-block;margin-left:8px;font-size:10px;font-weight:700;letter-spacing:.06em;
+        color:var(--blue);background:rgba(56,139,253,.13);border-radius:4px;padding:2px 6px;font-family:'IBM Plex Mono';vertical-align:middle}
+  .meta{font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:8px;align-items:center;font-family:'IBM Plex Mono'}
+  .meta .src{color:var(--text)} .meta .dot{color:var(--dim)}
+  .badge{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:999px;
+         font-size:11px;font-weight:600;letter-spacing:.02em;background:rgba(139,151,168,.12);color:var(--muted);border:1px solid var(--border)}
+  .badge .d{width:6px;height:6px;border-radius:50%;background:var(--dim)}
+  /* risk + findings */
+  .row2{display:flex;gap:16px;align-items:center;margin:15px 0 14px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .score{display:flex;align-items:center;gap:11px;min-width:170px}
+  .num{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--crit);line-height:1;min-width:40px}
+  .bar{flex:1} .bar .l{font-size:10px;color:var(--muted);letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase}
+  .track{height:6px;border-radius:999px;background:#0B0E14;border:1px solid var(--border);overflow:hidden}
+  .fill{height:100%;width:84%;background:linear-gradient(90deg,#D29922,#F85149)}
+  .findings{flex:1;display:flex;flex-direction:column;gap:6px}
+  .f{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;
+       letter-spacing:.05em;font-family:'IBM Plex Mono',monospace}
+  .crit{background:rgba(248,81,73,.14);color:var(--crit)} .warn{background:rgba(210,153,34,.14);color:var(--warn)}
+  .info{background:rgba(56,139,253,.13);color:var(--blue)}
+  .f code{font-family:'IBM Plex Mono';color:var(--text)}
+  .actions{display:flex;gap:9px;align-items:center}
+  button{font-family:inherit;font-size:13px;font-weight:600;border-radius:8px;padding:8px 15px;border:1px solid transparent;cursor:pointer;letter-spacing:.01em}
+  .approve{background:var(--ok);color:#04130A;border-color:var(--ok)}
+  .block{background:transparent;color:var(--crit);border-color:rgba(248,81,73,.45)}
+  .defer{background:var(--surface-2);color:var(--muted);border-color:var(--border)}
+  .more{margin-left:auto;font-size:12px;color:var(--blue);font-family:'IBM Plex Mono';cursor:pointer}
+</style>
+</head>
+<body>
+  <h1>Approval queue · pending item</h1>
+  <div class="item">
+    <div class="top">
+      <div>
+        <span class="name">fs.write_file</span><span class="kind">TOOL</span>
+        <div class="meta"><span class="src">acme/agent-tools</span><span class="dot">·</span>main<span class="dot">·</span>sha 9f3c1ad</div>
+      </div>
+      <span class="badge"><span class="d"></span>PENDING</span>
+    </div>
+    <div class="row2">
+      <div class="score">
+        <div class="num">82</div>
+        <div class="bar"><div class="l">Risk score · 3 findings</div><div class="track"><div class="fill"></div></div></div>
+      </div>
+      <div class="findings">
+        <div class="f"><span class="tag crit">CRIT</span>Unsandboxed filesystem write to <code>$HOME</code></div>
+        <div class="f"><span class="tag warn">WARN</span>Reads env vars <code>AWS_*</code> at invocation</div>
+        <div class="f"><span class="tag info">INFO</span>No declared network scope</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="approve">Approve &amp; pin</button>
+      <button class="block">Block</button>
+      <button class="defer">Defer</button>
+      <span class="more">View diff &amp; manifest →</span>
+    </div>
+  </div>
+</body>
+</html>

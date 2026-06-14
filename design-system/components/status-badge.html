@@ -1,0 +1,43 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Status badge — tool lifecycle</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--border:#2A3242;--text:#E6EDF3;--muted:#8B97A8;
+        --dim:#5A6678;--ok:#3FB950;--drift:#DB6D28;--crit:#F85149;--blue:#388BFD}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+     font-weight:600;margin:0 0 18px}
+  .stack{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .badge{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 9px;
+         border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.02em;
+         border:1px solid transparent}
+  .dot{width:7px;height:7px;border-radius:50%}
+  .pending{background:rgba(139,151,168,.12);color:var(--muted);border-color:var(--border)}
+  .pending .dot{background:var(--dim)}
+  .approved{background:rgba(63,185,80,.13);color:var(--ok);border-color:rgba(63,185,80,.3)}
+  .approved .dot{background:var(--ok)}
+  .drifted{background:rgba(219,109,40,.14);color:var(--drift);border-color:rgba(219,109,40,.32)}
+  .drifted .dot{background:var(--drift);box-shadow:0 0 0 3px rgba(219,109,40,.18)}
+  .blocked{background:rgba(248,81,73,.13);color:var(--crit);border-color:rgba(248,81,73,.32)}
+  .blocked .dot{background:var(--crit)}
+  .note{margin-top:20px;font-size:12px;color:var(--dim);max-width:520px;line-height:1.6}
+</style>
+</head>
+<body>
+  <h1>Status badge · tool lifecycle</h1>
+  <div class="stack">
+    <span class="badge pending"><span class="dot"></span>PENDING</span>
+    <span class="badge approved"><span class="dot"></span>APPROVED</span>
+    <span class="badge drifted"><span class="dot"></span>DRIFTED</span>
+    <span class="badge blocked"><span class="dot"></span>BLOCKED</span>
+  </div>
+  <p class="note">DRIFTED pulses to draw attention — it means the live definition no longer
+  matches the pinned hash (a possible rug-pull) and needs re-approval or block.</p>
+</body>
+</html>

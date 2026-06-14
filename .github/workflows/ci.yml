@@ -1,0 +1,109 @@
+name: CI
+
+# Green pipeline is table stakes for a security product (MA3-95). Runs the full
+# Gradle build across every module — including the Testcontainers integration
+# tests that can't run in our local build container (no nested Docker) but DO
+# run here, since GitHub-hosted runners ship a working Docker daemon — plus the
+# Next.js console build. PRs are gated on both.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+# A newer push to the same branch/PR cancels the older in-flight run.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend · gradle build (+ Testcontainers)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # Verifies the checked-in gradle-wrapper.jar matches a known-good release
+      # checksum — supply-chain hygiene befitting a trust registry.
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # `build` runs compile + the full test suite for :app, :parser, :scanner.
+      # Testcontainers auto-detects the runner's Docker daemon and spins up the
+      # Postgres container the JPA/integration tests need.
+      - name: Build & test (all modules)
+        run: ./gradlew build --no-daemon --stacktrace
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-test-reports
+          path: "**/build/reports/tests/"
+          retention-days: 7
+
+  console:
+    name: Console · next build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: console
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: console/package-lock.json
+
+      - name: Install deps
+        run: npm ci
+
+      # `next build` runs ESLint + type-checking + the production build, so it
+      # is the single green gate for the console.
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+  image:
+    name: Image · Dockerfile build (app + console)
+    # Packaging smoke test — only on pushes to the main branches, not every PR,
+    # to keep the PR gate fast. Validates the multi-stage builds end to end; does
+    # not push anywhere (no registry credentials).
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          tags: vouchq-app:ci
+
+      - name: Build console image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./console
+          file: ./console/Dockerfile
+          push: false
+          tags: vouchq-console:ci

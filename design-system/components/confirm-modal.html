@@ -1,0 +1,56 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Confirm modal — destructive action</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif}
+  .backdrop{min-height:100vh;background:rgba(6,9,14,.72);backdrop-filter:blur(2px);
+            display:grid;place-items:center;padding:28px}
+  .modal{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border-strong);
+         border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.6)}
+  .head{padding:18px 20px 4px;display:flex;align-items:center;gap:11px}
+  .head .ic{width:34px;height:34px;border-radius:9px;flex:0 0 auto;
+            background:rgba(248,81,73,.12);border:1px solid rgba(248,81,73,.32);display:grid;place-items:center}
+  .head .ic svg{width:18px;height:18px;stroke:var(--crit);fill:none;stroke-width:2}
+  .head .t{font-size:16px;font-weight:600}
+  .body{padding:10px 20px 20px}
+  .body p{font-size:13px;color:var(--muted);line-height:1.6;margin:0}
+  .body code{font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:12px;
+             background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+  .body b{color:var(--text);font-weight:600}
+  .foot{padding:14px 20px;border-top:1px solid var(--border);background:var(--bg);
+        display:flex;justify-content:flex-end;gap:10px}
+  button{font-family:inherit;font-size:13px;font-weight:600;border-radius:8px;
+         padding:9px 16px;border:1px solid transparent;cursor:pointer}
+  .ghost{background:transparent;color:var(--text);border-color:var(--border-strong)}
+  .danger{background:var(--crit);color:#1A0707;border-color:var(--crit);
+          display:inline-flex;align-items:center;gap:7px}
+  .danger svg{width:14px;height:14px;stroke:#1A0707;fill:none;stroke-width:2.2}
+</style>
+</head>
+<body>
+  <div class="backdrop">
+    <div class="modal" role="alertdialog" aria-labelledby="ct">
+      <div class="head">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 16.5v.5"/></svg></span>
+        <div class="t" id="ct">Block this tool?</div>
+      </div>
+      <div class="body">
+        <p>Blocking <code>shell.exec</code> immediately revokes it for all connected agents.
+        In-flight calls are denied and the tool is marked <b>BLOCKED</b> until re-approved.
+        This action is logged to the audit trail.</p>
+      </div>
+      <div class="foot">
+        <button class="ghost">Cancel</button>
+        <button class="danger"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>Block tool</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

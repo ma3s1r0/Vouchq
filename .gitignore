@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+build/
+**/build/
+.gradle-home/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Env / secrets
+.env
+*.local
+
+# OS
+.DS_Store
+
+# Local Claude Code config (agents, skills, settings, worktrees) — not tracked
+.claude/
+
+# Docs are kept out of git (internal spec lived here) — not tracked
+docs/

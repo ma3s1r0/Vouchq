@@ -1,0 +1,57 @@
+<!-- @dsCard group="Layout" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Login — sign in</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD;--ok:#3FB950}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:radial-gradient(120% 90% at 50% -10%,#10151F 0%,var(--bg) 60%);
+       color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;
+       min-height:560px;display:grid;place-items:center;padding:28px}
+  .card{width:344px;background:var(--surface);border:1px solid var(--border);border-radius:14px;
+        padding:30px 28px 26px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.01em;justify-content:center}
+  .brand .mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#388BFD,#3FB950);
+               display:grid;place-items:center;color:#06121F;font-weight:700;font-size:16px;font-family:'IBM Plex Mono'}
+  .tag{text-align:center;color:var(--muted);font-size:12px;margin:8px 0 24px;letter-spacing:.02em}
+  label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 7px}
+  input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;
+        padding:10px 12px;font-size:13px;color:var(--text);font-family:'IBM Plex Mono',monospace}
+  input::placeholder{color:var(--dim)}
+  input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,139,253,.16)}
+  .primary{width:100%;margin-top:16px;background:var(--blue);color:#06121F;border:1px solid var(--blue);
+           border-radius:8px;padding:10px 15px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:.01em}
+  .sep{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--dim);font-size:11px;letter-spacing:.1em}
+  .sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--border)}
+  .sso{width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border-strong);
+       border-radius:8px;padding:10px 15px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;
+       display:flex;align-items:center;justify-content:center;gap:9px}
+  .sso svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:1.7}
+  .foot{margin-top:20px;text-align:center;color:var(--dim);font-size:11px;display:flex;align-items:center;justify-content:center;gap:6px}
+  .foot svg{width:12px;height:12px;stroke:var(--ok);fill:none;stroke-width:2}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand"><span class="mark">V</span>vouchq</div>
+    <p class="tag">Sign in to the trust registry</p>
+    <label for="email">Work email</label>
+    <input id="email" type="email" value="admin@vouchq.local">
+    <button class="primary">Continue</button>
+    <div class="sep">OR</div>
+    <button class="sso">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0110 0v3"/></svg>
+      Continue with SSO
+    </button>
+    <div class="foot">
+      <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
+      SOC 2 · scoped access · audited sign-in
+    </div>
+  </div>
+</body>
+</html>

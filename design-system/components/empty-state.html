@@ -1,0 +1,39 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Empty state</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 18px}
+  .panel{max-width:480px;background:var(--surface);border:1px dashed var(--border-strong);border-radius:12px;
+         padding:42px 28px;text-align:center}
+  .ic{width:54px;height:54px;border-radius:13px;background:var(--surface-2);border:1px solid var(--border-strong);
+      display:grid;place-items:center;margin:0 auto 18px}
+  .ic svg{width:26px;height:26px;stroke:var(--dim);fill:none;stroke-width:1.6}
+  .t{font-size:16px;font-weight:600;margin:0 0 6px}
+  .c{font-size:13px;color:var(--muted);margin:0 auto 20px;max-width:300px;line-height:1.5}
+  .primary{background:var(--blue);color:#06121F;border:1px solid var(--blue);border-radius:8px;
+           padding:9px 17px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;
+           display:inline-flex;align-items:center;gap:8px}
+  .primary svg{width:15px;height:15px;stroke:#06121F;fill:none;stroke-width:2.2}
+</style>
+</head>
+<body>
+  <h1>Empty state</h1>
+  <div class="panel">
+    <div class="ic">
+      <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 8v8M8 8a5 5 0 006 2"/></svg>
+    </div>
+    <p class="t">No sources connected yet</p>
+    <p class="c">Connect a Git repository to scan its MCP servers, Skills &amp; Tools and start building your trust registry.</p>
+    <button class="primary"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Connect source</button>
+  </div>
+</body>
+</html>

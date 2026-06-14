@@ -1,0 +1,9 @@
+# Quadlet network unit — internal bridge shared by the db + app containers.
+# Install to ~/.config/containers/systemd/ (rootless) or
+# /etc/containers/systemd/ (rootful), then `systemctl --user daemon-reload`.
+# See docs/self-hosting.md → "systemd / Quadlet".
+[Unit]
+Description=Vouchq internal network
+
+[Network]
+NetworkName=vouchq

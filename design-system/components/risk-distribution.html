@@ -1,0 +1,44 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Risk distribution — 위험 등급 분포</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--border:#2A3242;--text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;
+        --clean:#3A4459;--info:#388BFD;--warn:#D29922;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:24px}
+  .card{border:1px solid var(--border);border-radius:11px;background:var(--surface);padding:16px 18px;max-width:340px}
+  .cap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;
+       display:flex;align-items:baseline;gap:8px;margin-bottom:14px}
+  .cap .total{margin-left:auto;font-family:'IBM Plex Mono';font-size:12px;color:var(--dim);letter-spacing:0;text-transform:none}
+  .cap .total b{color:var(--text)}
+  .stack{display:flex;height:12px;border-radius:999px;overflow:hidden;background:#0B0E14;border:1px solid var(--border)}
+  .stack i{display:block;height:100%}
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;margin-top:16px}
+  .li{display:flex;align-items:center;gap:8px;font-size:12px}
+  .li .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+  .li .lbl{color:var(--muted)}
+  .li .n{margin-left:auto;font-family:'IBM Plex Mono';font-size:12px;font-weight:500;color:var(--text)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="cap">위험 등급 분포<span class="total"><b>128</b> assets</span></div>
+    <div class="stack">
+      <i style="width:64%;background:var(--clean)"></i>
+      <i style="width:16%;background:var(--info)"></i>
+      <i style="width:13%;background:var(--warn)"></i>
+      <i style="width:7%;background:var(--crit)"></i>
+    </div>
+    <div class="legend">
+      <div class="li"><span class="dot" style="background:var(--clean)"></span><span class="lbl">Clean</span><span class="n">82</span></div>
+      <div class="li"><span class="dot" style="background:var(--info)"></span><span class="lbl">INFO</span><span class="n">20</span></div>
+      <div class="li"><span class="dot" style="background:var(--warn)"></span><span class="lbl">WARN</span><span class="n">17</span></div>
+      <div class="li"><span class="dot" style="background:var(--crit)"></span><span class="lbl">CRITICAL</span><span class="n">9</span></div>
+    </div>
+  </div>
+</body>
+</html>

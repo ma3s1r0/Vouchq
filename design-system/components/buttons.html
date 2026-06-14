@@ -1,0 +1,37 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Buttons — actions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--blue:#388BFD;--ok:#3FB950;--crit:#F85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+     font-weight:600;margin:0 0 18px}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+  button{font-family:inherit;font-size:13px;font-weight:600;border-radius:8px;
+         padding:8px 15px;border:1px solid transparent;cursor:pointer;letter-spacing:.01em}
+  .primary{background:var(--blue);color:#06121F;border-color:var(--blue)}
+  .approve{background:var(--ok);color:#04130A}
+  .block{background:transparent;color:var(--crit);border-color:rgba(248,81,73,.45)}
+  .ghost{background:transparent;color:var(--text);border-color:var(--border-strong)}
+  .subtle{background:var(--surface-2);color:var(--muted);border-color:var(--border)}
+  .label{flex:0 0 90px;font-size:11px;color:#5A6678;font-family:'IBM Plex Sans'}
+</style>
+</head>
+<body>
+  <h1>Buttons · actions</h1>
+  <div class="row"><span class="label">primary</span>
+    <button class="primary">Pin definition</button>
+    <button class="ghost">Cancel</button></div>
+  <div class="row"><span class="label">review</span>
+    <button class="approve">Approve &amp; pin</button>
+    <button class="block">Block</button>
+    <button class="subtle">Defer</button></div>
+</body>
+</html>

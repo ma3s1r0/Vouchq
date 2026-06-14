@@ -1,0 +1,79 @@
+<!-- @dsCard group="Layout" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>App shell — nav + topbar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD;--ok:#3FB950;--drift:#DB6D28;--crit:#F85149}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif}
+  .app{display:grid;grid-template-columns:212px 1fr;height:560px}
+  /* sidebar */
+  .side{background:#0D1119;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 12px}
+  .brand{display:flex;align-items:center;gap:9px;padding:6px 8px 18px;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .mark{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#388BFD,#3FB950);
+               display:grid;place-items:center;color:#06121F;font-weight:700;font-size:13px;font-family:'IBM Plex Mono'}
+  nav{display:flex;flex-direction:column;gap:2px}
+  .nav{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;color:var(--muted);
+       font-size:13px;font-weight:500;cursor:pointer;text-decoration:none}
+  .nav:hover{background:var(--surface);color:var(--text)}
+  .nav.active{background:rgba(56,139,253,.12);color:#9DC3FF}
+  .nav svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;flex:0 0 auto}
+  .nav .count{margin-left:auto;font-family:'IBM Plex Mono';font-size:11px;color:var(--drift)}
+  .spacer{flex:1}
+  .user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-top:1px solid var(--border);margin-top:8px;color:var(--muted);font-size:12px}
+  .avatar{width:24px;height:24px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border-strong);
+          display:grid;place-items:center;font-size:11px;color:var(--text)}
+  /* main */
+  .main{display:flex;flex-direction:column;min-width:0}
+  .top{height:54px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 22px;background:#0D1119}
+  .crumb{font-size:13px;color:var(--muted)} .crumb b{color:var(--text);font-weight:600}
+  .search{margin-left:auto;background:var(--bg);border:1px solid var(--border);border-radius:7px;
+          padding:6px 11px;font-size:12px;color:var(--dim);width:230px;font-family:'IBM Plex Mono'}
+  .content{padding:22px;overflow:auto}
+  .h{font-size:20px;font-weight:600;margin:0 0 4px} .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--a,var(--dim))}
+  .lab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .val{font-size:28px;font-weight:600;font-family:'IBM Plex Mono';margin:8px 0 2px}
+  .d{font-size:12px;color:var(--dim)}
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand"><span class="mark">V</span>vouchq</div>
+      <nav>
+        <a class="nav active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+        <a class="nav"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Inventory</a>
+        <a class="nav"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Approvals<span class="count">6</span></a>
+        <a class="nav"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.6L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.6a2 2 0 00-3.4 0z"/></svg>Drift<span class="count">9</span></a>
+        <a class="nav"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Audit log</a>
+        <a class="nav"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1l2-1.5-2-3.5-2.4 1a7 7 0 00-1.7-1L14.5 3h-5l-.3 2.5a7 7 0 00-1.7 1l-2.4-1-2 3.5L3.1 11a7 7 0 000 2l-2 1.5 2 3.5 2.4-1a7 7 0 001.7 1l.3 2.5h5l.3-2.5a7 7 0 001.7-1l2.4 1 2-3.5-2-1.5a7 7 0 00.1-1z"/></svg>Settings</a>
+      </nav>
+      <div class="spacer"></div>
+      <div class="user"><span class="avatar">MA</span>platform · security</div>
+    </aside>
+    <section class="main">
+      <header class="top">
+        <span class="crumb"><b>Dashboard</b></span>
+        <input class="search" value="search assets, hashes…" disabled>
+      </header>
+      <div class="content">
+        <h1 class="h">Organization overview</h1>
+        <p class="sub">128 assets across 4 sources · last scan 4m ago</p>
+        <div class="cards">
+          <div class="card" style="--a:#388BFD"><div class="lab">Registered</div><div class="val">128</div><div class="d">94 approved · 28 pending</div></div>
+          <div class="card" style="--a:#DB6D28"><div class="lab">Unresolved drift</div><div class="val">9</div><div class="d" style="color:#F85149">4 critical · 5 warn</div></div>
+          <div class="card" style="--a:#D29922"><div class="lab">Approval queue</div><div class="val">6</div><div class="d">▲ 2 today</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

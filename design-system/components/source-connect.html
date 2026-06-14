@@ -1,0 +1,78 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Connect source — form</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--bg:#0B0E14;--surface:#141922;--surface-2:#1C2230;--border:#2A3242;--border-strong:#3A4459;
+        --text:#E6EDF3;--muted:#8B97A8;--dim:#5A6678;--blue:#388BFD;--ok:#3FB950}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;padding:28px}
+  h1{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 18px}
+  .card{max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+  .head .ic{width:30px;height:30px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border-strong);
+            display:grid;place-items:center}
+  .head .ic svg{width:16px;height:16px;stroke:var(--text);fill:none;stroke-width:1.7}
+  .head .t{font-size:15px;font-weight:600} .head .s{font-size:12px;color:var(--muted);margin-top:1px}
+  .body{padding:20px}
+  .field{margin-bottom:16px}
+  label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 7px}
+  .wrap{position:relative;display:flex;align-items:center}
+  input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;
+        padding:10px 12px;font-size:13px;color:var(--text);font-family:'IBM Plex Mono',monospace}
+  input::placeholder{color:var(--dim)}
+  input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,139,253,.16)}
+  .masked{letter-spacing:.18em}
+  .lock{position:absolute;right:11px;display:flex;align-items:center;gap:5px;color:var(--ok);font-size:10px;font-weight:600;
+        font-family:'IBM Plex Sans';letter-spacing:.04em;pointer-events:none}
+  .lock svg{width:12px;height:12px;stroke:var(--ok);fill:none;stroke-width:2}
+  .two{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+  .hint{font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.5}
+  .hint b{color:var(--ok);font-weight:600}
+  .actions{margin-top:20px;display:flex;gap:10px;align-items:center}
+  .primary{background:var(--blue);color:#06121F;border:1px solid var(--blue);border-radius:8px;
+           padding:9px 16px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;
+           display:inline-flex;align-items:center;gap:8px}
+  .primary svg{width:15px;height:15px;stroke:#06121F;fill:none;stroke-width:2}
+  .ghost{background:transparent;color:var(--text);border:1px solid var(--border-strong);border-radius:8px;
+         padding:9px 16px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+  <h1>Connect source</h1>
+  <div class="card">
+    <div class="head">
+      <span class="ic"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 8.5v7M8.3 8.5a6 6 0 007.4 2"/></svg></span>
+      <div><div class="t">Connect a Git source</div><div class="s">Scan repository for MCP servers, Skills &amp; Tools</div></div>
+    </div>
+    <div class="body">
+      <div class="field">
+        <label for="url">Repository URL</label>
+        <div class="wrap"><input id="url" value="https://github.com/acme/agent-tools.git"></div>
+      </div>
+      <div class="two">
+        <div class="field">
+          <label for="tok">Access token</label>
+          <div class="wrap">
+            <input id="tok" class="masked" type="password" value="ghp_8x4kQ29pLrT0mZ7"/>
+            <span class="lock"><svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>ENCRYPTED</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="branch">Branch</label>
+          <div class="wrap"><input id="branch" value="main"></div>
+        </div>
+      </div>
+      <p class="hint"><b>Token is encrypted at rest</b> (AES-256) and used read-only to clone &amp; scan. It is never logged or shown again after save.</p>
+      <div class="actions">
+        <button class="primary"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.2-8.5"/><path d="M21 4v5h-5"/></svg>Connect &amp; scan</button>
+        <button class="ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
