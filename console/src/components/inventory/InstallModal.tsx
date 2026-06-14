@@ -1,9 +1,16 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { InventoryItem } from "@/lib/mock-inventory";
 import { useToast } from "@/lib/feedback";
 import { useT } from "@/lib/i18n";
+
+/** Where an installed skill lands, per agent. */
+type Target = "claude" | "cursor";
+const TARGET_DIR: Record<Target, string> = {
+  claude: ".claude/skills/",
+  cursor: ".cursor/rules/",
+};
 
 /**
  * Group one-click install modal (MA3-139). Shows the copy-paste `curl | sh`
@@ -21,6 +28,7 @@ export function InstallModal({
 }) {
   const { t } = useT();
   const toast = useToast();
+  const [target, setTarget] = useState<Target>("claude");
 
   const skills = group.items.filter((i) => i.kind === "SKILL");
   const approved = skills.filter((i) => i.status === "APPROVED");
@@ -34,9 +42,9 @@ export function InstallModal({
   const command = useMemo(() => {
     if (!group.sourceId) return null;
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${origin}/api/sources/${group.sourceId}/install.sh`;
-    return `curl -fsSL -u 'EMAIL:PASSWORD' ${url} \\\n  | VOUCHQ_AUTH='EMAIL:PASSWORD' sh`;
-  }, [group.sourceId]);
+    const url = `${origin}/api/sources/${group.sourceId}/install.sh?target=${target}`;
+    return `curl -fsSL -u 'EMAIL:PASSWORD' '${url}' \\\n  | VOUCHQ_AUTH='EMAIL:PASSWORD' sh`;
+  }, [group.sourceId, target]);
 
   // Escape closes; lock background scroll while open.
   useEffect(() => {
@@ -87,6 +95,37 @@ export function InstallModal({
             <p className="text-[13px] text-dim">{t("install.none")}</p>
           ) : (
             <>
+              {/* target picker — which agent to install into */}
+              <div>
+                <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-dim">
+                  {t("install.targetLabel")}
+                </span>
+                <div
+                  className="mt-1.5 inline-flex w-full rounded-lg border border-border bg-surface-2 p-0.5 text-[13px] font-semibold"
+                  role="group"
+                  aria-label={t("install.targetLabel")}
+                >
+                  {(["claude", "cursor"] as const).map((tg) => (
+                    <button
+                      key={tg}
+                      type="button"
+                      onClick={() => setTarget(tg)}
+                      aria-pressed={target === tg}
+                      className={`flex-1 rounded-md px-3 py-1.5 transition-colors ${
+                        target === tg
+                          ? "bg-primary/[0.14] text-[#9DC3FF]"
+                          : "text-muted hover:text-text"
+                      }`}
+                    >
+                      {tg === "claude" ? "Claude" : "Cursor"}
+                      <span className="ml-1.5 font-mono text-[11px] font-normal opacity-70">
+                        {TARGET_DIR[tg]}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* the one-liner */}
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
@@ -112,8 +151,11 @@ export function InstallModal({
                 <p className="text-muted">
                   {t("install.willInstall")}{" "}
                   <b className="text-text">{approved.length}</b> {t("install.skills")}{" "}
-                  {t("install.target")}{" "}
-                  <span className="font-mono text-text">.claude/skills/</span>
+                  {target === "cursor" ? t("install.targetAs") : t("install.target")}{" "}
+                  <span className="font-mono text-text">{TARGET_DIR[target]}</span>
+                  {target === "cursor" && (
+                    <span className="font-mono text-text">{`<name>.mdc`}</span>
+                  )}
                 </p>
                 <p className="mt-1.5 flex flex-wrap gap-x-2 gap-y-1 font-mono text-[11.5px] text-dim">
                   {approved.map((s) => (
@@ -121,6 +163,9 @@ export function InstallModal({
                   ))}
                 </p>
                 <p className="mt-2 text-[11.5px] text-dim">{t("install.verifyNote")}</p>
+                {target === "cursor" && (
+                  <p className="mt-1 text-[11.5px] text-warn/90">{t("install.cursorNote")}</p>
+                )}
               </div>
 
               {/* honesty: excluded + mcp */}

@@ -175,6 +175,12 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "install.willInstall": { en: "Will install", ko: "설치 대상" },
   "install.skills": { en: "skill(s)", ko: "개 스킬" },
   "install.target": { en: "into", ko: "→ 설치 위치" },
+  "install.targetAs": { en: "as", ko: "→" },
+  "install.targetLabel": { en: "Install into", ko: "설치 대상 에이전트" },
+  "install.cursorNote": {
+    en: "Each skill's SKILL.md becomes a Cursor rule; bundled scripts are not installed (Cursor rules don't run scripts).",
+    ko: "각 스킬의 SKILL.md가 Cursor 룰로 변환됩니다. 번들 스크립트는 설치되지 않습니다(Cursor 룰은 스크립트를 실행하지 않음).",
+  },
   "install.verifyNote": { en: "Each file is hash-verified against the pinned version before writing.", ko: "각 파일은 박제된 버전 해시로 검증한 뒤 기록됩니다." },
   "install.excluded": { en: "excluded (not approved):", ko: "제외됨(미승인):" },
   "install.mcpNote": { en: "MCP tools in this source aren't installable here yet.", ko: "이 소스의 MCP 도구는 아직 여기서 설치할 수 없습니다." },

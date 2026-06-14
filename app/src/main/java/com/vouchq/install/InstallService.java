@@ -173,20 +173,31 @@ public class InstallService {
         if (av.isEmpty()) {
             return Optional.empty();
         }
-        JsonNode files = approvedDefinitionFiles(tool);
-        if (files == null) {
+        JsonNode def = approvedDefinition(tool);
+        if (def == null || !def.path("files").isArray()) {
             return Optional.empty();
         }
         List<ApiDtos.InstallFile> out = new ArrayList<>();
-        for (JsonNode f : files) {
+        for (JsonNode f : def.path("files")) {
             out.add(new ApiDtos.InstallFile(f.path("path").asText(""), f.path("sha256").asText("")));
         }
         return Optional.of(new ApiDtos.InstallSkill(
-                tool.getName(), av.get().getHash(), av.get().getApprovedAt(), out));
+                tool.getName(), def.path("description").asText(""),
+                av.get().getHash(), av.get().getApprovedAt(), out));
     }
 
     /** The {@code files} array from an approved tool's pinned definition, or null. */
     private JsonNode approvedDefinitionFiles(Tool tool) {
+        JsonNode def = approvedDefinition(tool);
+        if (def == null) {
+            return null;
+        }
+        JsonNode files = def.path("files");
+        return files.isArray() ? files : null;
+    }
+
+    /** The full parsed (ParsedSkill-shaped) definition of an approved tool, or null. */
+    private JsonNode approvedDefinition(Tool tool) {
         ApprovedVersion av = approvedVersions.findById(tool.getApprovedVersionId()).orElse(null);
         if (av == null) {
             return null;
@@ -196,8 +207,7 @@ public class InstallService {
             return null;
         }
         try {
-            JsonNode files = objectMapper.readTree(tv.getDefinition()).path("files");
-            return files.isArray() ? files : null;
+            return objectMapper.readTree(tv.getDefinition());
         } catch (Exception e) {
             return null;
         }

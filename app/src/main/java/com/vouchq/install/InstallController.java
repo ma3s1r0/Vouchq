@@ -57,7 +57,13 @@ public class InstallController {
      * it records the distribution event (MA3-140).
      */
     @GetMapping(value = "/api/sources/{id}/install.sh", produces = "text/x-shellscript")
-    public ResponseEntity<String> script(@PathVariable UUID id, Authentication authentication) {
+    public ResponseEntity<String> script(@PathVariable UUID id,
+                                         @RequestParam(defaultValue = "claude") String target,
+                                         Authentication authentication) {
+        String tgt = target.trim().toLowerCase();
+        if (!tgt.equals("claude") && !tgt.equals("cursor")) {
+            throw new IllegalArgumentException("Unknown install target: " + target + " (claude|cursor)");
+        }
         UUID orgId = currentOrg.require();
         ApiDtos.InstallManifest manifest = install.buildManifest(orgId, id);
         String actor = authentication != null ? authentication.getName() : "system";
@@ -66,18 +72,29 @@ public class InstallController {
         String base = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("text/x-shellscript"))
-                .body(renderScript(base, id, manifest));
+                .body(renderScript(base, id, manifest, tgt));
     }
 
-    /** Render the POSIX script; the plan (sha → relative path) is embedded inline. */
-    private static String renderScript(String base, UUID sourceId, ApiDtos.InstallManifest m) {
+    /**
+     * Render the POSIX install script. Both targets fetch each file by hash and
+     * verify it (verify-then-adapt): Claude writes the bytes verbatim into
+     * {@code .claude/skills/}; Cursor renders each skill's {@code SKILL.md} into a
+     * {@code .cursor/rules/<name>.mdc} rule (frontmatter swapped) and warns that
+     * bundled scripts aren't installed (Cursor rules don't run scripts).
+     */
+    private static String renderScript(String base, UUID sourceId,
+                                       ApiDtos.InstallManifest m, String target) {
+        boolean cursor = target.equals("cursor");
         StringBuilder plan = new StringBuilder();
         for (ApiDtos.InstallSkill skill : m.skills()) {
-            for (ApiDtos.InstallFile f : skill.files()) {
-                // skill name + file path form the destination under .claude/skills/.
-                plan.append("install_file ")
-                        .append(shquote(f.sha256())).append(' ')
-                        .append(shquote(skill.name() + "/" + f.path())).append('\n');
+            if (cursor) {
+                appendCursorPlan(plan, skill);
+            } else {
+                for (ApiDtos.InstallFile f : skill.files()) {
+                    plan.append("install_file ")
+                            .append(shquote(f.sha256())).append(' ')
+                            .append(shquote(skill.name() + "/" + f.path())).append('\n');
+                }
             }
         }
         String excluded = m.excluded().total() == 0 ? ""
@@ -87,16 +104,21 @@ public class InstallController {
                 ? "echo \"vouchq: nothing to install — no approved skills in this source.\"\n"
                 : plan.toString();
 
+        String destDefault = cursor ? "${VOUCHQ_RULES_DIR:-.cursor/rules}"
+                : "${VOUCHQ_SKILLS_DIR:-.claude/skills}";
+        String writer = cursor ? CURSOR_WRITER : CLAUDE_WRITER;
+        String installing = cursor ? "Cursor rules into" : "vouched skills into";
+
         return """
                 #!/bin/sh
-                # vouchq vouched install — source %s (%s)
+                # vouchq vouched install (%s) — source %s (%s)
                 # Installs only APPROVED + pinned Skills. Every file is fetched from
                 # vouchq (the exact governed bytes) and hash-verified before writing.
                 set -eu
 
                 BASE=%s
                 SOURCE=%s
-                DEST="${VOUCHQ_SKILLS_DIR:-.claude/skills}"
+                DEST="%s"
                 AUTH="${VOUCHQ_AUTH:-}"
 
                 fetch() { curl -fsSL ${AUTH:+-u "$AUTH"} "$1"; }
@@ -106,25 +128,82 @@ public class InstallController {
                   else echo "vouchq: need sha256sum or shasum" >&2; exit 1; fi
                 }
 
-                install_file() {
-                  sha="$1"; rel="$2"; out="$DEST/$rel"
-                  mkdir -p "$(dirname "$out")"
-                  tmp="$(mktemp)"
+                # Fetch a file by hash and verify it; echoes the verified temp path or aborts.
+                fetch_verified() {
+                  sha="$1"; tmp="$(mktemp)"
                   fetch "$BASE/api/sources/$SOURCE/install/file?sha256=$sha" > "$tmp"
                   got="$(sha256_of "$tmp")"
                   if [ "$got" != "$sha" ]; then
-                    echo "vouchq: hash mismatch for $rel (want $sha, got $got) — aborting" >&2
+                    echo "vouchq: hash mismatch (want $sha, got $got) — aborting" >&2
                     rm -f "$tmp"; exit 1
                   fi
-                  mv "$tmp" "$out"
-                  echo "  ok $rel"
+                  printf '%%s' "$tmp"
                 }
-
-                echo "vouchq: installing vouched skills into $DEST"
+                %s
+                echo "vouchq: installing %s $DEST"
                 %s%s
                 echo "vouchq: done."
-                """.formatted(label(m), sourceId, shquote(base), shquote(sourceId.toString()),
-                        excluded, body);
+                """.formatted(cursor ? "cursor" : "claude", label(m), sourceId,
+                        shquote(base), shquote(sourceId.toString()), destDefault,
+                        writer, installing, excluded, body);
+    }
+
+    /** Claude writer: the verified bytes go into {@code $DEST/<skill>/<path>} verbatim. */
+    private static final String CLAUDE_WRITER = """
+            install_file() {
+              sha="$1"; rel="$2"; out="$DEST/$rel"
+              mkdir -p "$(dirname "$out")"
+              tmp="$(fetch_verified "$sha")"
+              mv "$tmp" "$out"
+              echo "  ok $rel"
+            }""";
+
+    /**
+     * Cursor writer: render a verified SKILL.md into {@code $DEST/<name>.mdc},
+     * replacing its frontmatter with a Cursor rule header (description + manual
+     * attach). The body (everything after the first --- block) is kept verbatim.
+     */
+    private static final String CURSOR_WRITER = """
+            cursor_rule() {
+              sha="$1"; name="$2"; desc="$3"; out="$DEST/$name.mdc"
+              mkdir -p "$(dirname "$out")"
+              tmp="$(fetch_verified "$sha")"
+              {
+                printf -- '---\\ndescription: "%s"\\nalwaysApply: false\\n---\\n' "$desc"
+                awk 'NR==1 && $0=="---"{f=1;next} f==1 && $0=="---"{f=2;next} f!=1{print}' "$tmp"
+              } > "$out"
+              rm -f "$tmp"
+              echo "  ok $name.mdc"
+            }""";
+
+    /** One skill → a cursor_rule call for its SKILL.md, + a warning for any extra files. */
+    private static void appendCursorPlan(StringBuilder plan, ApiDtos.InstallSkill skill) {
+        ApiDtos.InstallFile skillMd = skill.files().stream()
+                .filter(f -> f.path().equalsIgnoreCase("SKILL.md"))
+                .findFirst().orElse(null);
+        if (skillMd == null) {
+            plan.append("echo ").append(shquote(
+                    "vouchq: " + skill.name() + " has no SKILL.md — skipped")).append('\n');
+            return;
+        }
+        plan.append("cursor_rule ")
+                .append(shquote(skillMd.sha256())).append(' ')
+                .append(shquote(skill.name())).append(' ')
+                .append(shquote(cursorDescription(skill.description()))).append('\n');
+        long extra = skill.files().stream()
+                .filter(f -> !f.path().equalsIgnoreCase("SKILL.md")).count();
+        if (extra > 0) {
+            plan.append("echo ").append(shquote("vouchq: " + skill.name() + " — " + extra
+                    + " bundled file(s) skipped (Cursor rules don't run scripts)")).append('\n');
+        }
+    }
+
+    /** One-line, YAML-safe description for the Cursor rule frontmatter. */
+    private static String cursorDescription(String desc) {
+        if (desc == null) {
+            return "";
+        }
+        return desc.replaceAll("\\s+", " ").replace('"', '\'').trim();
     }
 
     private static String label(ApiDtos.InstallManifest m) {

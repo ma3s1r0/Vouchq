@@ -205,7 +205,7 @@ public final class ApiDtos {
     public record InstallFile(String path, String sha256) {}
 
     /** One APPROVED + pinned skill in the group, with its files. */
-    public record InstallSkill(String name, String versionHash,
+    public record InstallSkill(String name, String description, String versionHash,
                                OffsetDateTime approvedAt, List<InstallFile> files) {}
 
     /** Counts of skills left out of the install because they aren't approved. */

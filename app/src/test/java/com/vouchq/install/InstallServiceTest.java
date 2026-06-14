@@ -95,6 +95,7 @@ class InstallServiceTest {
 
         assertThat(m.skills()).hasSize(1);
         assertThat(m.skills().get(0).name()).isEqualTo("alpha");
+        assertThat(m.skills().get(0).description()).isEqualTo("d");
         assertThat(m.skills().get(0).versionHash()).isEqualTo(hash);
         assertThat(m.skills().get(0).files()).extracting(ApiDtos.InstallFile::path)
                 .containsExactlyInAnyOrder("SKILL.md", "scripts/run.sh");
@@ -132,7 +133,7 @@ class InstallServiceTest {
     void recordInstallServedAppendsAudit() {
         ApiDtos.InstallManifest m = new ApiDtos.InstallManifest("0.1",
                 new ApiDtos.InstallSourceRef(SOURCE, "uri", "label"), OffsetDateTime.now(),
-                List.of(new ApiDtos.InstallSkill("alpha", "a".repeat(64), OffsetDateTime.now(), List.of())),
+                List.of(new ApiDtos.InstallSkill("alpha", "d", "a".repeat(64), OffsetDateTime.now(), List.of())),
                 new ApiDtos.InstallExcluded(0, 0, 0));
 
         service.recordInstallServed(ORG, SOURCE, "admin", m);
