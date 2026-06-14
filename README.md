@@ -3,6 +3,7 @@
 > **Private trust registry for MCP tools. Approve once, pin cryptographically, detect rug-pulls forever.**
 > An approved MCP server or Skill can silently change its tool definitions *after* you trust it. Vouchq snapshots the approved definition, pins it by SHA-256 (박제), and raises a drift event the moment the live definition diverges — with a tamper-evident audit trail. Register · Scan · Approve & Pin · Detect drift · Audit.
 
+[![Release](https://img.shields.io/github/v/release/ma3s1r0/Vouchq?include_prereleases&color=388BFD)](https://github.com/ma3s1r0/Vouchq/releases)
 [![Website](https://img.shields.io/badge/website-vouchq.is--a.dev-388BFD)](https://vouchq.is-a.dev)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-3FB950)](LICENSE)
 [![Java 21](https://img.shields.io/badge/Java-21-388BFD)](https://openjdk.org/projects/jdk/21/)
@@ -161,6 +162,7 @@ Java 21 · Spring Boot 3 · PostgreSQL · Flyway · Gradle (multi-module) · Con
 
 - **[Threat model](docs/threat-model.md)** — what Vouchq defends against, and what it explicitly does not
 - **[How Vouchq compares](docs/comparison.md)** — vs MCP registries, gateways, and scanners
+- **[Scanner rules](docs/scanner-rules.md)** — the full rule catalog + how to add one (good first issue)
 - Deployment: see **Production (self-hosted, Docker Compose)** above + `.env.prod.example`
 - API: OpenAPI / Swagger UI at `/swagger-ui` on a running backend
 - Roadmap: Linear project **Vouchq**
