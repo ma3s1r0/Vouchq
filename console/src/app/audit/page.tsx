@@ -6,7 +6,7 @@ import { AuditLog } from "@/components/audit/AuditLog";
 // the client component fetches one page at a time rather than the whole chain.
 export default function AuditPage() {
   return (
-    <AppShell crumb="Audit log">
+    <AppShell crumbKey="nav.audit">
       <PageHeading titleKey="page.audit.title" subtitle={<AuditSubtitle />} />
       <AuditLog />
     </AppShell>

@@ -47,6 +47,7 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "dash.riskDistribution": { en: "Risk distribution", ko: "위험 등급 분포" },
   "dash.recentActivity": { en: "Recent activity", ko: "최근 활동" },
   "dash.by": { en: "by", ko: "수행자:" },
+  "dash.recentActivity.empty": { en: "No recent activity yet.", ko: "최근 활동이 없습니다." },
   "risk.clean": { en: "Clean", ko: "정상" },
 
   // login
@@ -145,6 +146,7 @@ const DICT: Record<string, { en: string; ko: string }> = {
   // inventory
   "inventory.search": { en: "search name, version, source…", ko: "이름·버전·소스 검색…" },
   "inventory.versionRef": { en: "ver", ko: "버전" },
+  "filter.all": { en: "ALL", ko: "전체" },
   "inventory.filter.kind": { en: "Kind", ko: "유형" },
   "inventory.filter.status": { en: "Status", ko: "상태" },
   "inventory.filter.risk": { en: "Risk", ko: "위험" },
@@ -320,6 +322,9 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "settings.channels.optInNote": { en: ". Nothing leaves your network until you enable and test a destination.", ko: ". 대상을 활성화하고 테스트하기 전까지는 네트워크 외부로 데이터가 나가지 않습니다." },
   "settings.channels.add": { en: "Add channel", ko: "채널 추가" },
   "settings.channels.empty": { en: "No notification channels configured. Add one above.", ko: "알림 채널이 설정되어 있지 않습니다. 위에서 추가하세요." },
+  "channel.EMAIL": { en: "Email", ko: "이메일" },
+  "channel.SLACK": { en: "Slack", ko: "Slack" },
+  "channel.WEBHOOK": { en: "Webhook", ko: "웹훅" },
   "settings.channels.test": { en: "Test", ko: "테스트" },
   "settings.channels.testing": { en: "Testing…", ko: "테스트 중…" },
   "settings.channels.testOk": { en: "Test sent", ko: "테스트 전송됨" },
@@ -345,6 +350,7 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "settings.members.deactivate": { en: "Deactivate", ko: "비활성화" },
   "settings.members.cannotSelf": { en: "Cannot deactivate yourself", ko: "본인은 비활성화할 수 없습니다" },
   "settings.members.confirm.deactivate": { en: "They will lose access.", ko: "해당 사용자는 접근 권한을 잃게 됩니다." },
+  "settings.members.confirm.role": { en: "Change this member's role?", ko: "이 멤버의 역할을 변경하시겠습니까?" },
   "settings.members.form.title": { en: "Invite new member", ko: "새 멤버 초대" },
   "settings.members.form.email": { en: "Email", ko: "이메일" },
   "settings.members.form.displayName": { en: "Display name", ko: "표시 이름" },
@@ -425,7 +431,19 @@ const I18nContext = createContext<I18nState>({
   t: (k) => k,
 });
 
-const STORAGE_KEY = "vouchq-lang";
+/** Shared with the server layout so SSR can set <html lang> (MA3-129). */
+export const LANG_COOKIE = "vouchq-lang";
+const STORAGE_KEY = LANG_COOKIE;
+
+function persistLang(l: Lang) {
+  try {
+    localStorage.setItem(STORAGE_KEY, l);
+  } catch {
+    /* storage may be unavailable (private mode) */
+  }
+  // Mirror to a cookie so the next server render emits the right <html lang>.
+  document.cookie = `${LANG_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
+}
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
@@ -433,7 +451,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Hydrate from localStorage on mount (avoids SSR/client mismatch).
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === "ko" || saved === "en") setLangState(saved);
+    if (saved === "ko" || saved === "en") {
+      setLangState(saved);
+      persistLang(saved); // ensure the cookie exists for SSR even on old sessions
+    }
   }, []);
 
   // Keep <html lang> in sync so AT/pronunciation/hyphenation match (WCAG 3.1.1).
@@ -443,7 +464,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const setLang = (l: Lang) => {
     setLangState(l);
-    localStorage.setItem(STORAGE_KEY, l);
+    persistLang(l);
   };
 
   const t = (key: string): string => {

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/shell/AppShell";
+import { DetailBreadcrumb } from "@/components/shell/DetailBreadcrumb";
 import { StatusBadge } from "@/components/inventory/StatusBadge";
 import { DiffView } from "@/components/inventory/DiffView";
 import { FindingsPanel } from "@/components/inventory/FindingsPanel";
@@ -20,13 +20,8 @@ export default async function ToolDetailPage({
   if (!tool) notFound();
 
   return (
-    <AppShell crumb="Inventory">
-      <div className="mb-1 text-[12px] text-dim">
-        <Link href="/inventory" className="hover:text-text hover:underline">
-          Inventory
-        </Link>{" "}
-        / <span className="font-mono text-muted">{tool.name}</span>
-      </div>
+    <AppShell crumbKey="nav.inventory">
+      <DetailBreadcrumb leaf={tool.name} />
 
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="font-mono text-[20px] font-semibold">{tool.name}</h1>

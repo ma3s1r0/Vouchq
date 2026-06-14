@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n";
 
-export function Topbar({ crumb }: { crumb: string }) {
+export function Topbar({ crumbKey }: { crumbKey: string }) {
   const { lang, setLang, t } = useT();
   const router = useRouter();
   const [q, setQ] = useState("");
@@ -19,9 +19,9 @@ export function Topbar({ crumb }: { crumb: string }) {
 
   return (
     <header className="flex h-[54px] flex-none items-center gap-3.5 border-b border-border bg-sidebar px-[22px]">
-      <span className="text-[13px] text-muted">
-        <b className="font-semibold text-text">{crumb}</b>
-      </span>
+      <nav aria-label="Breadcrumb" className="text-[13px] text-muted">
+        <b className="font-semibold text-text">{t(crumbKey)}</b>
+      </nav>
       <form onSubmit={submit} className="ml-auto">
         <input
           value={q}

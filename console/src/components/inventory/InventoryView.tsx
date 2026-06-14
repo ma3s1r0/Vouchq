@@ -190,19 +190,21 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
           value={kind}
           options={KIND_OPTIONS}
           onChange={setKind}
+          format={(v) => (v === "ALL" ? t("filter.all") : v)}
         />
         <FilterSelect
           label={t("inventory.filter.status")}
           value={status}
           options={STATUS_OPTIONS}
           onChange={setStatus}
+          format={(v) => (v === "ALL" ? t("filter.all") : v)}
         />
         <FilterSelect
           label={t("inventory.filter.risk")}
           value={risk}
           options={RISK_OPTIONS}
           onChange={setRisk}
-          format={(v) => (v === "ALL" ? "ALL" : `≥ ${v}`)}
+          format={(v) => (v === "ALL" ? t("filter.all") : `≥ ${v}`)}
         />
 
         <span className="ml-auto whitespace-nowrap font-mono text-[12px] text-dim">

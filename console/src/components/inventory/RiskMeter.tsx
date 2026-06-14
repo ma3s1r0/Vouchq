@@ -6,9 +6,16 @@ import { riskColorVar, riskFillVar } from "@/lib/risk";
  */
 export function RiskMeter({ risk }: { risk: number }) {
   return (
-    <div className="flex items-center gap-2 font-mono text-[12px]">
+    <div
+      className="flex items-center gap-2 font-mono text-[12px]"
+      role="img"
+      aria-label={`Risk score ${risk} of 100`}
+    >
       <span style={{ color: riskColorVar(risk) }}>{risk}</span>
-      <span className="h-[5px] w-[46px] overflow-hidden rounded-full border border-border bg-bg">
+      <span
+        aria-hidden
+        className="h-[5px] w-[46px] overflow-hidden rounded-full border border-border bg-bg"
+      >
         <span
           className="block h-full"
           style={{ width: `${risk}%`, background: riskFillVar(risk) }}

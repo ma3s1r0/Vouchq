@@ -14,10 +14,10 @@ import { Topbar } from "./Topbar";
  * rather than a flash of content.
  */
 export function AppShell({
-  crumb,
+  crumbKey,
   children,
 }: {
-  crumb: string;
+  crumbKey: string;
   children: React.ReactNode;
 }) {
   const { loading } = useAuth();
@@ -38,7 +38,7 @@ export function AppShell({
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
       <section className="flex min-w-0 flex-1 flex-col">
-        <Topbar crumb={crumb} />
+        <Topbar crumbKey={crumbKey} />
         <div className="flex-1 overflow-auto p-[22px]">{children}</div>
       </section>
     </div>

@@ -7,7 +7,7 @@ export default async function InventoryPage() {
   const items = await getInventory();
 
   return (
-    <AppShell crumb="Inventory">
+    <AppShell crumbKey="nav.inventory">
       <PageHeading
         titleKey="page.inventory.title"
         subtitleKey="page.inventory.subtitle"

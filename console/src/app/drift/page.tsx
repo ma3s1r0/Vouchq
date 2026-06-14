@@ -7,7 +7,7 @@ export default async function DriftPage() {
   const alerts = await getDriftAlerts();
 
   return (
-    <AppShell crumb="Drift">
+    <AppShell crumbKey="nav.drift">
       <PageHeading
         titleKey="page.drift.title"
         subtitle={<DriftSubtitle count={alerts.length} />}

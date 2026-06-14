@@ -17,7 +17,7 @@ export default async function SettingsPage() {
   ]);
 
   return (
-    <AppShell crumb="Settings">
+    <AppShell crumbKey="nav.settings">
       <PageHeading
         titleKey="page.settings.title"
         subtitleKey="page.settings.subtitle"

@@ -162,7 +162,10 @@ function AccountSection() {
             <input id="confirm" name="confirm" type="password" required className={inputCls} />
           </div>
           {msg && (
-            <p className={`text-[12px] ${msg.ok ? "text-approved" : "text-crit"}`}>
+            <p
+              role={msg.ok ? "status" : "alert"}
+              className={`text-[12px] ${msg.ok ? "text-approved" : "text-crit"}`}
+            >
               {msg.text}
             </p>
           )}
@@ -555,6 +558,7 @@ function AddChannelForm({
 }) {
   const { t } = useT();
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputCls =
     "w-full rounded-lg border border-border bg-bg px-3 py-2.5 font-mono text-[13px] text-text outline-none placeholder:text-dim focus:border-primary";
   const labelCls =
@@ -567,6 +571,7 @@ function AddChannelForm({
     const name = (form.elements.namedItem("ch-name") as HTMLInputElement).value.trim();
     const target = (form.elements.namedItem("ch-target") as HTMLInputElement).value.trim();
     if (!name || !target) return;
+    setError(null);
     setSubmitting(true);
     try {
       const created = await api.createNotificationChannel({
@@ -583,8 +588,8 @@ function AddChannelForm({
         config: created.config,
         enabled: created.enabled,
       });
-    } catch {
-      // Keep form open for retry.
+    } catch (err) {
+      setError(err instanceof Error && err.message ? err.message : t("common.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -613,9 +618,9 @@ function AddChannelForm({
               className={inputCls}
               defaultValue="WEBHOOK"
             >
-              <option value="EMAIL">Email</option>
-              <option value="SLACK">Slack</option>
-              <option value="WEBHOOK">Webhook</option>
+              <option value="EMAIL">{t("channel.EMAIL")}</option>
+              <option value="SLACK">{t("channel.SLACK")}</option>
+              <option value="WEBHOOK">{t("channel.WEBHOOK")}</option>
             </select>
           </div>
           <div>
@@ -641,6 +646,9 @@ function AddChannelForm({
             />
           </div>
         </div>
+        {error && (
+          <p role="alert" className="text-[12px] text-crit">{error}</p>
+        )}
         <div className="flex gap-2.5">
           <button
             type="submit"
@@ -687,7 +695,7 @@ function memberInitials(displayName: string, email: string): string {
  */
 function MembersSection() {
   const { me } = useAuth();
-  const { t } = useT();
+  const { t, lang } = useT();
   const toast = useToast();
   const confirm = useConfirm();
   const isAdmin = me?.role === "ADMIN";
@@ -732,6 +740,13 @@ function MembersSection() {
   }, []);
 
   const handleRoleChange = async (m: Member, newRole: MemberRole) => {
+    if (newRole === m.role) return;
+    // RBAC change — confirm before applying. On cancel/failure, force a
+    // re-render so the controlled <select> snaps back to the real role.
+    if (!(await confirm(`${m.email}: ${m.role} → ${newRole}? ${t("settings.members.confirm.role")}`))) {
+      setMembers((prev) => [...prev]);
+      return;
+    }
     setRoleChanging(m.id);
     try {
       const updated = await api.patchMember(m.id, { role: newRole as ApiRole });
@@ -740,8 +755,10 @@ function MembersSection() {
           mem.id === m.id ? { ...mem, role: updated.role as MemberRole } : mem,
         ),
       );
+      toast("success", t("common.saved"));
     } catch {
-      // keep existing; user can retry
+      toast("error", t("common.failed"));
+      setMembers((prev) => [...prev]);
     } finally {
       setRoleChanging(null);
     }
@@ -811,17 +828,17 @@ function MembersSection() {
           <table className="w-full border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-border">
-                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+                <th scope="col" className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
                   {t("settings.members.col.member")}
                 </th>
-                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+                <th scope="col" className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
                   {t("settings.members.col.role")}
                 </th>
-                <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+                <th scope="col" className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
                   {t("settings.members.col.joined")}
                 </th>
                 {isAdmin && (
-                  <th className="px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+                  <th scope="col" className="px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
                     {t("settings.members.col.actions")}
                   </th>
                 )}
@@ -857,6 +874,7 @@ function MembersSection() {
                       <select
                         value={m.role}
                         disabled={roleChanging === m.id}
+                        aria-label={`${t("settings.members.col.role")} — ${m.email}`}
                         onChange={(e) =>
                           void handleRoleChange(m, e.target.value as MemberRole)
                         }
@@ -879,7 +897,7 @@ function MembersSection() {
                   </td>
                   <td className="px-4 py-[11px] font-mono text-[12px] text-dim">
                     {m.createdAt
-                      ? new Date(m.createdAt).toLocaleDateString()
+                      ? new Date(m.createdAt).toLocaleDateString(lang === "ko" ? "ko-KR" : "en-US")
                       : "—"}
                   </td>
                   {isAdmin && (
@@ -1224,7 +1242,7 @@ function SuppressionsSection({
   initialSuppressions: Suppression[];
 }) {
   const { me } = useAuth();
-  const { t } = useT();
+  const { t, lang } = useT();
   const toast = useToast();
   const confirm = useConfirm();
   const isAdmin = me?.role === "ADMIN";
@@ -1343,6 +1361,7 @@ function SuppressionsSection({
                   h === t("settings.suppress.col.createdAt") && !isAdmin ? null : (
                     <th
                       key={h}
+                      scope="col"
                       className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-dim"
                     >
                       {h}
@@ -1350,7 +1369,7 @@ function SuppressionsSection({
                   ),
                 )}
                 {isAdmin && (
-                  <th className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-dim">
+                  <th scope="col" className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-dim">
                     {t("settings.members.col.actions")}
                   </th>
                 )}
@@ -1390,7 +1409,7 @@ function SuppressionsSection({
                     {s.createdBy ?? "—"}
                   </td>
                   <td className="px-4 py-[11px] font-mono text-[12px] text-dim">
-                    {new Date(s.createdAt).toLocaleDateString()}
+                    {new Date(s.createdAt).toLocaleDateString(lang === "ko" ? "ko-KR" : "en-US")}
                   </td>
                   {isAdmin && (
                     <td className="px-4 py-[11px] text-right">
@@ -1553,6 +1572,7 @@ function AddPolicyRuleForm({
 }) {
   const { t } = useT();
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputCls =
     "w-full rounded-lg border border-border bg-bg px-3 py-2.5 font-mono text-[13px] text-text outline-none placeholder:text-dim focus:border-primary";
   const labelCls =
@@ -1577,6 +1597,7 @@ function AddPolicyRuleForm({
     if (severity) condition.severity = severity;
     if (minRiskScore !== undefined) condition.minRiskScore = minRiskScore;
 
+    setError(null);
     setSubmitting(true);
     try {
       const created = await api.createPolicyRule({
@@ -1594,8 +1615,8 @@ function AddPolicyRuleForm({
         action: created.action,
         enabled: created.enabled,
       });
-    } catch {
-      // Keep form open for retry.
+    } catch (err) {
+      setError(err instanceof Error && err.message ? err.message : t("common.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -1676,6 +1697,7 @@ function AddPolicyRuleForm({
             />
           </div>
         </div>
+        {error && <p role="alert" className="text-[12px] text-crit">{error}</p>}
         <div className="flex gap-2.5">
           <button
             type="submit"

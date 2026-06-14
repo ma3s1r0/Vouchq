@@ -11,7 +11,7 @@ export default async function DashboardPage() {
 
   if (s.totalAssets === 0) {
     return (
-      <AppShell crumb="Dashboard">
+      <AppShell crumbKey="nav.dashboard">
         <PageHeading titleKey="page.dashboard.title" />
         <Onboarding />
       </AppShell>
@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <AppShell crumb="Dashboard">
+    <AppShell crumbKey="nav.dashboard">
       <PageHeading
         titleKey="page.dashboard.title"
         subtitle={

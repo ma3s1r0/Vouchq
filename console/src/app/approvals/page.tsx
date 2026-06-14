@@ -7,7 +7,7 @@ export default async function ApprovalsPage() {
   const items = await getApprovalQueue();
 
   return (
-    <AppShell crumb="Approvals">
+    <AppShell crumbKey="nav.approvals">
       <PageHeading
         titleKey="page.approvals.title"
         subtitle={<ApprovalsSubtitle count={items.length} />}

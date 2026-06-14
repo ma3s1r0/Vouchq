@@ -38,6 +38,11 @@ export function RecentActivityList({
       <div className="border-b border-border bg-sidebar px-4 py-[11px] text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">
         {t("dash.recentActivity")}
       </div>
+      {activity.length === 0 && (
+        <div className="px-4 py-8 text-center text-[13px] text-dim">
+          {t("dash.recentActivity.empty")}
+        </div>
+      )}
       <ul>
         {activity.map((a) => {
           const k = KIND[a.kind];
