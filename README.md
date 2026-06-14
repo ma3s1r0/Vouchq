@@ -159,6 +159,8 @@ Java 21 · Spring Boot 3 · PostgreSQL · Flyway · Gradle (multi-module) · Con
 
 ## Documentation
 
+- **[Threat model](docs/threat-model.md)** — what Vouchq defends against, and what it explicitly does not
+- **[How Vouchq compares](docs/comparison.md)** — vs MCP registries, gateways, and scanners
 - Deployment: see **Production (self-hosted, Docker Compose)** above + `.env.prod.example`
 - API: OpenAPI / Swagger UI at `/swagger-ui` on a running backend
 - Roadmap: Linear project **Vouchq**
