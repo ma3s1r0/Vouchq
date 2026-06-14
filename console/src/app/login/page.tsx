@@ -34,7 +34,7 @@ export default function LoginPage() {
       if (msg.includes("401")) {
         setError(t("login.error"));
       } else {
-        setError("Could not reach the server. Check that the backend is running.");
+        setError(t("login.serverError"));
       }
     } finally {
       setSubmitting(false);
@@ -49,7 +49,7 @@ export default function LoginPage() {
             V
           </span>
           <h1 className="text-2xl font-semibold tracking-tight">vouchq</h1>
-          <p className="mt-1 text-sm text-muted">Admin Console</p>
+          <p className="mt-1 text-sm text-muted">{t("login.subtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -90,7 +90,10 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <p className="rounded-lg border border-crit/30 bg-crit/[0.08] px-3 py-2 text-[12px] text-crit">
+            <p
+              role="alert"
+              className="rounded-lg border border-crit/30 bg-crit/[0.08] px-3 py-2 text-[12px] text-crit"
+            >
               {error}
             </p>
           )}
@@ -104,9 +107,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-dim">
-          Vouchq — trust registry for AI agent capabilities
-        </p>
+        <p className="mt-6 text-center text-xs text-dim">{t("login.tagline")}</p>
       </div>
     </main>
   );

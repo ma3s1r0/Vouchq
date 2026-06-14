@@ -46,6 +46,8 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "dash.stat.blocked": { en: "Blocked", ko: "차단됨" },
   "dash.riskDistribution": { en: "Risk distribution", ko: "위험 등급 분포" },
   "dash.recentActivity": { en: "Recent activity", ko: "최근 활동" },
+  "dash.by": { en: "by", ko: "수행자:" },
+  "risk.clean": { en: "Clean", ko: "정상" },
 
   // login
   "login.title": { en: "Sign in to Vouchq", ko: "Vouchq 로그인" },
@@ -53,8 +55,12 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "login.password": { en: "Password", ko: "비밀번호" },
   "login.submit": { en: "Sign in", ko: "로그인" },
   "login.error": { en: "Invalid email or password.", ko: "이메일 또는 비밀번호가 올바르지 않습니다." },
+  "login.serverError": { en: "Could not reach the server. Check that the backend is running.", ko: "서버에 연결하지 못했습니다. 백엔드가 실행 중인지 확인하세요." },
+  "login.subtitle": { en: "Admin Console", ko: "관리자 콘솔" },
+  "login.tagline": { en: "Vouchq — trust registry for AI agent capabilities", ko: "Vouchq — AI 에이전트 역량을 위한 신뢰 레지스트리" },
 
   // settings tabs
+  "settings.tablist": { en: "Settings sections", ko: "설정 영역" },
   "settings.tab.sources": { en: "Sources", ko: "소스" },
   "settings.tab.channels": { en: "Notifications", ko: "알림" },
   "settings.tab.members": { en: "Members & roles", ko: "멤버 · 역할" },
@@ -110,6 +116,9 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "common.refresh": { en: "Refresh", ko: "새로 고침" },
   "common.copy": { en: "Copy", ko: "복사" },
   "common.copied": { en: "Copied ✓", ko: "복사됨 ✓" },
+  "common.on": { en: "ON", ko: "활성" },
+  "common.off": { en: "OFF", ko: "비활성" },
+  "shell.connecting": { en: "connecting…", ko: "연결 중…" },
   "common.noMatch": { en: "No results match the current filters.", ko: "현재 필터에 맞는 결과가 없습니다." },
   "pager.prev": { en: "Prev", ko: "이전" },
   "pager.next": { en: "Next", ko: "다음" },
@@ -219,6 +228,8 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "findings.findings": { en: "findings", ko: "건 발견" },
   "findings.suppressed": { en: "suppressed", ko: "건 억제됨" },
   "findings.suppress.error": { en: "Could not suppress — please retry.", ko: "억제하지 못했습니다. 다시 시도하세요." },
+  "findings.suppress.aria": { en: "Suppress this finding", ko: "이 발견 항목 억제" },
+  "findings.suppressRule.aria": { en: "Suppress this rule for this tool", ko: "이 도구에서 이 룰 억제" },
   "findings.suppressedChip": { en: "Suppressed", ko: "억제됨" },
   "findings.suppress": { en: "Suppress", ko: "억제" },
   "findings.suppressRule": { en: "Suppress rule", ko: "규칙 억제" },
@@ -271,6 +282,8 @@ const DICT: Record<string, { en: string; ko: string }> = {
 
   // version history
   "versionHistory.title": { en: "Version history", ko: "버전 히스토리" },
+  "version.pinned": { en: "PINNED", ko: "박제됨" },
+  "version.drifted": { en: "DRIFTED", ko: "드리프트" },
 
   // settings — sources
   "settings.sources.heading": { en: "Connected sources", ko: "연결된 소스" },

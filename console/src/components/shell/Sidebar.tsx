@@ -133,10 +133,13 @@ export function Sidebar() {
           </div>
         ) : (
           <div className="flex items-center gap-[9px] px-2.5 py-2 text-[12px] text-muted">
-            <span className="grid h-6 w-6 place-items-center rounded-full border border-border-strong bg-surface-2 font-mono text-[11px] text-text">
+            <span
+              aria-hidden
+              className="grid h-6 w-6 place-items-center rounded-full border border-border-strong bg-surface-2 font-mono text-[11px] text-text"
+            >
               --
             </span>
-            connecting…
+            {t("shell.connecting")}
           </div>
         )}
       </div>

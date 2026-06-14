@@ -7,11 +7,11 @@ import { useT } from "@/lib/i18n";
  * 위험 등급 분포 — stacked proportion bar + legend.
  * Colors follow the severity-tag / color tokens: crit, warn, info(primary), clean(approved).
  */
-const ORDER: { key: RiskLevel; label: string; varName: string }[] = [
-  { key: "CRITICAL", label: "Critical", varName: "var(--color-blocked)" },
-  { key: "WARN", label: "Warn", varName: "var(--color-warn)" },
-  { key: "INFO", label: "Info", varName: "var(--color-primary)" },
-  { key: "CLEAN", label: "Clean", varName: "var(--color-approved)" },
+const ORDER: { key: RiskLevel; labelKey: string; varName: string }[] = [
+  { key: "CRITICAL", labelKey: "findings.critical", varName: "var(--color-blocked)" },
+  { key: "WARN", labelKey: "findings.warn", varName: "var(--color-warn)" },
+  { key: "INFO", labelKey: "findings.info", varName: "var(--color-primary)" },
+  { key: "CLEAN", labelKey: "risk.clean", varName: "var(--color-approved)" },
 ];
 
 export function RiskDistribution({
@@ -44,16 +44,17 @@ export function RiskDistribution({
       </div>
 
       <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5">
-        {ORDER.map(({ key, label, varName }) => (
+        {ORDER.map(({ key, labelKey, varName }) => (
           <li
             key={key}
             className="flex items-center gap-2 text-[12px] text-muted"
           >
             <span
+              aria-hidden
               className="h-2 w-2 flex-none rounded-full"
               style={{ background: varName }}
             />
-            {label}
+            {t(labelKey)}
             <span className="ml-auto font-mono text-text">
               {distribution[key]}
             </span>

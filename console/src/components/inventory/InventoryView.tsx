@@ -170,13 +170,17 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
     <div className="flex flex-col gap-3">
       <div className="flex max-w-full flex-wrap items-center gap-2.5 rounded-[11px] border border-border bg-surface px-3.5 py-3">
         <div className="relative min-w-[220px] flex-1">
-          <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[12px] text-dim">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[12px] text-dim"
+          >
             ⌕
           </span>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("inventory.search")}
+            aria-label={t("inventory.search")}
             className="w-full rounded-lg border border-border bg-bg py-2 pl-[30px] pr-2.5 font-mono text-[12.5px] text-text outline-none placeholder:text-dim focus:border-border-strong"
           />
         </div>
@@ -211,7 +215,7 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
           disabled={rescanning}
           className="inline-flex items-center gap-[7px] rounded-lg bg-primary px-3.5 py-2 text-[13px] font-semibold text-[#04101F] transition-opacity hover:opacity-90 disabled:opacity-60"
         >
-          <span className="h-[7px] w-[7px] rounded-full bg-[#04101F]" />
+          <span aria-hidden className="h-[7px] w-[7px] rounded-full bg-[#04101F]" />
           {rescanning ? t("action.rescanning") : t("action.rescanAll")}
         </button>
       </div>
@@ -223,6 +227,7 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
               {TABLE_COLS.map((h) => (
                 <th
                   key={h}
+                  scope="col"
                   className="border-b border-border bg-sidebar px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-dim"
                 >
                   {h}

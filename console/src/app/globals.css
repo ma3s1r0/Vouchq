@@ -74,5 +74,12 @@ button:disabled {
   }
 }
 .drift-pulse {
-  animation: drift-pulse 1.8s ease-in-out infinite;
+  /* Static ring by default; only animate when the user hasn't asked to reduce
+     motion (a11y, MA3-127). */
+  box-shadow: 0 0 0 3px rgba(219, 109, 40, 0.18);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .drift-pulse {
+    animation: drift-pulse 1.8s ease-in-out infinite;
+  }
 }

@@ -65,7 +65,7 @@ export function VersionHistory({
                   <span
                     className={`ml-2 rounded font-mono text-[10px] font-bold tracking-[0.05em] px-[7px] py-px align-[1px] ${CHIP[v.marker]}`}
                   >
-                    {v.marker}
+                    {t(v.marker === "PINNED" ? "version.pinned" : "version.drifted")}
                   </span>
                 )}
               </div>

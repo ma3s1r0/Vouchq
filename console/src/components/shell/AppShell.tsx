@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
+import { useT } from "@/lib/i18n";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 
@@ -20,13 +21,16 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   const { loading } = useAuth();
+  const { t } = useT();
 
   // While auth check is in flight, render a blank dark screen (no redirect yet).
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-bg">
-        <span className="font-mono text-[13px] text-dim">Loading…</span>
-      </div>
+      <main className="flex h-screen items-center justify-center bg-bg">
+        <span role="status" className="font-mono text-[13px] text-dim">
+          {t("common.loading")}
+        </span>
+      </main>
     );
   }
 

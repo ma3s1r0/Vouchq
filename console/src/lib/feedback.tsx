@@ -136,6 +136,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
           className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 px-6"
           role="dialog"
           aria-modal="true"
+          aria-labelledby="confirm-dialog-text"
           onClick={() => settle(false)}
         >
           <div
@@ -143,7 +144,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
             className="w-full max-w-sm rounded-xl border border-border bg-surface p-5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-[13px] leading-relaxed text-text">{req.text}</p>
+            <p id="confirm-dialog-text" className="text-[13px] leading-relaxed text-text">{req.text}</p>
             <div className="mt-4 flex justify-end gap-2.5">
               <button
                 ref={cancelRef}

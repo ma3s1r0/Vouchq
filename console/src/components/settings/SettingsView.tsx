@@ -53,13 +53,16 @@ export function SettingsView({
 
   return (
     <div className="flex max-w-[760px] flex-col gap-4">
-      <div className="flex gap-1 border-b border-border">
+      <div role="tablist" aria-label={t("settings.tablist")} className="flex gap-1 border-b border-border">
         {TABS.map((tabDef) => (
           <button
             key={tabDef.id}
             type="button"
+            role="tab"
+            id={`settings-tab-${tabDef.id}`}
+            aria-selected={tab === tabDef.id}
+            aria-controls={`settings-panel-${tabDef.id}`}
             onClick={() => setTab(tabDef.id)}
-            aria-current={tab === tabDef.id ? "page" : undefined}
             className={[
               "-mb-px border-b-2 px-3.5 py-2.5 text-[13px] font-medium transition-colors",
               tab === tabDef.id
@@ -72,14 +75,20 @@ export function SettingsView({
         ))}
       </div>
 
-      {tab === "sources" && <SourcesSection sources={sources} />}
-      {tab === "channels" && <ChannelsSection initialChannels={initialChannels} />}
-      {tab === "members" && <MembersSection />}
-      {tab === "policy" && <PolicySection initialRules={initialPolicyRules} />}
-      {tab === "suppressions" && (
-        <SuppressionsSection initialSuppressions={initialSuppressions} />
-      )}
-      {tab === "account" && <AccountSection />}
+      <div
+        role="tabpanel"
+        id={`settings-panel-${tab}`}
+        aria-labelledby={`settings-tab-${tab}`}
+      >
+        {tab === "sources" && <SourcesSection sources={sources} />}
+        {tab === "channels" && <ChannelsSection initialChannels={initialChannels} />}
+        {tab === "members" && <MembersSection />}
+        {tab === "policy" && <PolicySection initialRules={initialPolicyRules} />}
+        {tab === "suppressions" && (
+          <SuppressionsSection initialSuppressions={initialSuppressions} />
+        )}
+        {tab === "account" && <AccountSection />}
+      </div>
     </div>
   );
 }
@@ -1148,11 +1157,12 @@ function PolicySection({ initialRules }: { initialRules: PolicyRule[] }) {
                   }`}
                 >
                   <span
+                    aria-hidden
                     className={`h-1.5 w-1.5 rounded-full ${
                       r.enabled ? "bg-approved" : "bg-dim"
                     }`}
                   />
-                  {r.enabled ? "ON" : "OFF"}
+                  {r.enabled ? t("common.on") : t("common.off")}
                 </span>
 
                 {/* Toggle */}

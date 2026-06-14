@@ -55,7 +55,7 @@ export function RecentActivityList({
                   </span>
                   <span className="truncate">{a.asset}</span>
                 </div>
-                <div className="mt-1 text-[12px] text-muted">by {a.actor}</div>
+                <div className="mt-1 text-[12px] text-muted">{t("dash.by")} {a.actor}</div>
               </div>
               <time
                 className="whitespace-nowrap font-mono text-[11px] text-dim"

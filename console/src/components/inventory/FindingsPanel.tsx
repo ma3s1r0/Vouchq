@@ -183,7 +183,7 @@ export function FindingsPanel({
                           suppressing === fpKey || suppressing === ruleKey
                         }
                         onClick={() => void handleSuppress(f, "fingerprint")}
-                        title="Suppress this specific finding (fingerprint-scoped)"
+                        aria-label={`${t("findings.suppress.aria")} (${f.ruleId})`}
                         className="rounded-[6px] border border-border px-2 py-0.5 font-mono text-[10px] font-semibold text-muted hover:border-warn/60 hover:text-warn disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {suppressing === fpKey ? "…" : t("findings.suppress")}
@@ -194,7 +194,7 @@ export function FindingsPanel({
                           suppressing === fpKey || suppressing === ruleKey
                         }
                         onClick={() => void handleSuppress(f, "rule")}
-                        title="Suppress this rule for this tool (rule-scoped)"
+                        aria-label={`${t("findings.suppressRule.aria")} (${f.ruleId})`}
                         className="rounded-[6px] border border-border px-2 py-0.5 font-mono text-[10px] font-semibold text-muted hover:border-warn/60 hover:text-warn disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {suppressing === ruleKey ? "…" : t("findings.suppressRule")}
