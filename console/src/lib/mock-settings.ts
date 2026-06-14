@@ -6,9 +6,10 @@
  *  - `connectSource()` / `rescanSource()`: call `POST /api/sources` / `POST /api/sources/{id}/scan`.
  *  - `getNotificationChannels()`: calls `GET /api/settings/notification-channels` (MA3-92).
  *  - `getPolicyRules()`: calls `GET /api/settings/policy-rules` (MA3-92).
+ *  - `getMembers()`: calls `GET /api/settings/members` (MA3-93).
  *
- * LOCAL FALLBACK (no API yet):
- *  - Members & roles (`getMembers()`) — depends on MA3-93, not yet built.
+ * No fabricated fallbacks: on a trust product, errors propagate so the UI shows a
+ * real error state rather than fake config (MA3-126).
  *
  * Self-hosted constraint (기획서 §7): notification channels are opt-in and OFF
  * by default. Nothing leaves the network until a destination is enabled.
@@ -164,79 +165,21 @@ export async function rescanSource(id: string): Promise<void> {
 
 /* ── Notification channels (MA3-92: API-backed) ─────────────────────── */
 
-// Local fallback used when the API is unreachable (build time / dev).
-const FALLBACK_CHANNELS: NotificationChannel[] = [
-  {
-    id: "local-email",
-    kind: "EMAIL",
-    label: "Email",
-    target: "security@acme.io",
-    enabled: false,
-  },
-  {
-    id: "local-slack",
-    kind: "SLACK",
-    label: "Slack",
-    target: "#sec-alerts",
-    enabled: false,
-  },
-  {
-    id: "local-webhook",
-    kind: "WEBHOOK",
-    label: "Webhook",
-    target: "https://hooks.acme.io/vouchq/…",
-    enabled: false,
-  },
-];
-
+// No local fallback: on a trust product the settings screen must never show
+// fabricated channels as if they were real config. Errors propagate so the
+// caller surfaces a real error state (MA3-126).
 export async function getNotificationChannels(): Promise<NotificationChannel[]> {
-  try {
-    const channels = await api.getNotificationChannels();
-    return channels.map(mapApiChannel);
-  } catch {
-    // API not reachable (backend offline / build time) — return local fallback.
-    return FALLBACK_CHANNELS;
-  }
+  const channels = await api.getNotificationChannels();
+  return channels.map(mapApiChannel);
 }
 
 /* ── Policy rules (MA3-92: API-backed) ───────────────────────────────── */
 
-// Local fallback used when the API is unreachable (build time / dev).
-const FALLBACK_POLICY_RULES: PolicyRule[] = [
-  {
-    id: "p1",
-    name: "Auto-block CRITICAL findings",
-    priority: 1,
-    condition: { severity: "CRITICAL" },
-    action: "AUTO_BLOCK",
-    enabled: true,
-  },
-  {
-    id: "p2",
-    name: "Require approval on drift",
-    priority: 2,
-    condition: {},
-    action: "HOLD",
-    enabled: true,
-  },
-  {
-    id: "p3",
-    name: "Deny unsigned MCP servers",
-    priority: 3,
-    condition: { findingCategory: "UNSIGNED" },
-    action: "AUTO_BLOCK",
-    enabled: false,
-  },
-];
-
+// No local fallback — see getNotificationChannels (MA3-126). A fabricated
+// policy rule shown as real is a security misrepresentation.
 export async function getPolicyRules(): Promise<PolicyRule[]> {
-  try {
-    const rules = await api.getPolicyRules();
-    return rules.map(mapApiPolicyRule);
-  } catch {
-    // API not reachable (backend offline / build time) — return local fallback.
-    return FALLBACK_POLICY_RULES;
-  }
+  const rules = await api.getPolicyRules();
+  return rules.map(mapApiPolicyRule);
 }
 
 /* ── Suppressions (MA3-94: API-backed) ───────────────────────────────── */
@@ -265,15 +208,9 @@ function mapApiSuppression(s: ApiSuppression): Suppression {
   };
 }
 
-const FALLBACK_SUPPRESSIONS: Suppression[] = [];
-
 export async function getSuppressions(): Promise<Suppression[]> {
-  try {
-    const data = await api.getSuppressions();
-    return data.map(mapApiSuppression);
-  } catch {
-    return FALLBACK_SUPPRESSIONS;
-  }
+  const data = await api.getSuppressions();
+  return data.map(mapApiSuppression);
 }
 
 /* ── Members & roles (MA3-93: API-backed) ────────────────────────────── */
@@ -297,25 +234,9 @@ function mapApiMember(m: ApiMember): Member {
   };
 }
 
-// Local fallback used when the API is unreachable (build time / dev without backend).
-const LOCAL_MEMBERS: Member[] = [
-  {
-    id: "m1",
-    email: "admin@vouchq.local",
-    displayName: "Admin",
-    initials: "AD",
-    role: "ADMIN",
-    active: true,
-    createdAt: null,
-  },
-];
-
+// No local fallback — MembersSection has its own fetchError state, so the error
+// must propagate rather than render a fabricated admin row (MA3-126).
 export async function getMembers(): Promise<Member[]> {
-  try {
-    const members = await api.getMembers();
-    return members.map(mapApiMember);
-  } catch {
-    // API not reachable (backend offline / build time) — return local fallback.
-    return LOCAL_MEMBERS;
-  }
+  const members = await api.getMembers();
+  return members.map(mapApiMember);
 }

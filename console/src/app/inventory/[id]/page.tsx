@@ -58,7 +58,10 @@ export default async function ToolDetailPage({
             (tool.status === "APPROVED" || tool.status === "DRIFTED") && (
               <AddToClaude toolId={tool.id} />
             )}
-          {tool.kind === "MCP_TOOL" && <McpInstall toolId={tool.id} />}
+          {tool.kind === "MCP_TOOL" &&
+            (tool.status === "APPROVED" || tool.status === "DRIFTED") && (
+              <McpInstall toolId={tool.id} />
+            )}
           <VersionHistory name={tool.name} history={tool.history} />
         </div>
       </div>

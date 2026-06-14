@@ -15,6 +15,7 @@ import { StatusBadge } from "./StatusBadge";
 import { RiskMeter } from "./RiskMeter";
 import { Onboarding } from "@/components/shell/Onboarding";
 import { Pager } from "@/components/shell/Pager";
+import { useToast } from "@/lib/feedback";
 import { useT } from "@/lib/i18n";
 
 /** Rows per page — the rich filters (risk/source) stay client-side, so the
@@ -88,6 +89,7 @@ function FilterSelect<T extends string>({
 export function InventoryView({ items }: { items: InventoryItem[] }) {
   const router = useRouter();
   const { t } = useT();
+  const toast = useToast();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   // Keep the box in sync when arriving via the topbar global search (?q=…).
@@ -111,10 +113,17 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
     try {
       const sources = await api.getSources();
       // Best-effort: one unreachable source must not abort the whole rescan.
-      await Promise.allSettled(sources.map((s) => api.scanSource(s.id)));
+      const results = await Promise.allSettled(sources.map((s) => api.scanSource(s.id)));
+      const failed = results.filter((r) => r.status === "rejected").length;
       router.refresh();
+      if (failed > 0) {
+        toast("error", `${failed}/${results.length} ${t("inventory.rescan.partial")}`);
+      } else if (results.length > 0) {
+        toast("success", t("inventory.rescan.done"));
+      }
     } catch {
-      // Non-blocking; the button re-enables so the user can retry.
+      // The source list itself couldn't be fetched — tell the user.
+      toast("error", t("inventory.rescan.failed"));
     } finally {
       setRescanning(false);
     }
@@ -131,7 +140,7 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
       )
         return false;
       if (q) {
-        const hay = `${it.name} ${it.shaShort} ${it.source}`.toLowerCase();
+        const hay = `${it.name} ${it.versionRef} ${it.source}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -236,7 +245,7 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
                       {it.name}
                     </span>
                     <span className="block font-mono text-[11px] font-normal text-dim">
-                      sha256 {it.shaShort}…
+                      {t("inventory.versionRef")} {it.versionRef}
                     </span>
                   </Link>
                 </td>

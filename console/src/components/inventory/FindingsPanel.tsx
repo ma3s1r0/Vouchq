@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Finding } from "@/lib/mock-tool-detail";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/lib/feedback";
 import { riskColorVar, riskFillVar } from "@/lib/risk";
 import { SeverityTag } from "./SeverityTag";
 import { useT } from "@/lib/i18n";
@@ -49,6 +50,7 @@ export function FindingsPanel({
 }) {
   const { me } = useAuth();
   const { t } = useT();
+  const toast = useToast();
   const isAdmin = me?.role === "ADMIN";
 
   // Local copy so we can optimistically mark a finding as suppressed after
@@ -81,8 +83,11 @@ export function FindingsPanel({
           return ff;
         }),
       );
-    } catch {
-      // Non-blocking; the suppression button stays for retry.
+    } catch (err) {
+      // Suppression did NOT persist — say so, so an admin never believes a
+      // CRITICAL finding is suppressed when it isn't (MA3-126).
+      const msg = err instanceof Error && err.message ? err.message : t("findings.suppress.error");
+      toast("error", msg);
     } finally {
       setSuppressing(null);
     }

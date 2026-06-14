@@ -28,8 +28,12 @@ export type RiskBand = "CLEAN" | "INFO" | "WARN" | "CRITICAL";
 export interface InventoryItem {
   id: string;
   name: string;
-  /** Short sha256 prefix (display only). */
-  shaShort: string;
+  /**
+   * Short reference to the current version — the version id prefix, NOT a content
+   * hash. The list endpoint (ApiToolView) does not carry the sha256; the real
+   * content hash is shown on the detail page (from ToolVersionView.hash).
+   */
+  versionRef: string;
   kind: AssetKind;
   source: string;
   status: AssetStatus;
@@ -52,11 +56,12 @@ export function riskBand(risk: number): RiskBand {
 }
 
 function mapToolView(t: ApiToolView): InventoryItem {
-  // Use first 8 chars of UUID as a display stand-in for the sha hash.
-  // The actual content hash is on ToolVersionView (available in detail endpoint).
-  const shaShort = t.currentVersionId
+  // The list endpoint exposes only the current version's id (a UUID), not its
+  // content hash — so this is a version REFERENCE, never labeled as a sha256.
+  // The real content hash is shown on the detail page (ToolVersionView.hash).
+  const versionRef = t.currentVersionId
     ? t.currentVersionId.replace(/-/g, "").slice(0, 8)
-    : "00000000";
+    : "—";
 
   // Map API status strings to UI AssetStatus.
   const status = (t.status as string).toUpperCase() as AssetStatus;
@@ -73,7 +78,7 @@ function mapToolView(t: ApiToolView): InventoryItem {
   return {
     id: t.id,
     name: t.name,
-    shaShort,
+    versionRef,
     kind,
     // API does not expose source name on ToolView (requires a server/source join).
     // LOCAL FALLBACK: use serverId until the API enriches ToolView.

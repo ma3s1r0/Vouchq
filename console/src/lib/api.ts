@@ -122,7 +122,7 @@ async function post<T>(path: string, body?: unknown): Promise<T> {
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) {
-    throw new Error(`POST ${path} → ${res.status} ${res.statusText}`);
+    throw await readApiError(res, "POST", path);
   }
   // 204 No Content
   if (res.status === 204) return undefined as T;
@@ -142,7 +142,7 @@ async function patch<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    throw new Error(`PATCH ${path} → ${res.status} ${res.statusText}`);
+    throw await readApiError(res, "PATCH", path);
   }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
@@ -161,7 +161,7 @@ async function put<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    throw new Error(`PUT ${path} → ${res.status} ${res.statusText}`);
+    throw await readApiError(res, "PUT", path);
   }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
@@ -175,7 +175,7 @@ async function del(path: string): Promise<void> {
     headers: { Accept: "application/json", ...(await serverCookieHeader()) },
   });
   if (!res.ok) {
-    throw new Error(`DELETE ${path} → ${res.status} ${res.statusText}`);
+    throw await readApiError(res, "DELETE", path);
   }
 }
 

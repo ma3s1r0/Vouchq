@@ -72,6 +72,9 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "action.block": { en: "Block", ko: "차단" },
   "action.rescanAll": { en: "Rescan all", ko: "전체 재스캔" },
   "action.rescanning": { en: "Rescanning…", ko: "재스캔 중…" },
+  "inventory.rescan.done": { en: "Rescan complete.", ko: "재스캔 완료." },
+  "inventory.rescan.partial": { en: "sources failed to rescan.", ko: "개 소스 재스캔 실패." },
+  "inventory.rescan.failed": { en: "Could not start rescan — please retry.", ko: "재스캔을 시작하지 못했습니다. 다시 시도하세요." },
   "action.addToClaude": { en: "Add to Claude", ko: "Claude에 추가" },
   "action.addToCodex": { en: "Add to Codex", ko: "Codex에 추가" },
   "account.changePassword": { en: "Change password", ko: "비밀번호 변경" },
@@ -131,7 +134,8 @@ const DICT: Record<string, { en: string; ko: string }> = {
   },
 
   // inventory
-  "inventory.search": { en: "search name, sha256, source…", ko: "이름·sha256·소스 검색…" },
+  "inventory.search": { en: "search name, version, source…", ko: "이름·버전·소스 검색…" },
+  "inventory.versionRef": { en: "ver", ko: "버전" },
   "inventory.filter.kind": { en: "Kind", ko: "유형" },
   "inventory.filter.status": { en: "Status", ko: "상태" },
   "inventory.filter.risk": { en: "Risk", ko: "위험" },
@@ -214,6 +218,7 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "findings.riskScoreEffective": { en: "RISK SCORE (effective)", ko: "위험 점수 (유효)" },
   "findings.findings": { en: "findings", ko: "건 발견" },
   "findings.suppressed": { en: "suppressed", ko: "건 억제됨" },
+  "findings.suppress.error": { en: "Could not suppress — please retry.", ko: "억제하지 못했습니다. 다시 시도하세요." },
   "findings.suppressedChip": { en: "Suppressed", ko: "억제됨" },
   "findings.suppress": { en: "Suppress", ko: "억제" },
   "findings.suppressRule": { en: "Suppress rule", ko: "규칙 억제" },
