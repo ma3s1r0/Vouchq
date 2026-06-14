@@ -51,7 +51,9 @@ class SourcesUploadControllerTest {
         com.vouchq.credentials.CredentialCipher cipher =
                 new com.vouchq.credentials.AesGcmCredentialCipher(
                         new com.vouchq.credentials.CredentialProperties(null));
-        controller = new SourcesController(ingestion, rescan, sources, cipher, currentOrg);
+        com.vouchq.registry.SourceDeletionService sourceDeletion =
+                mock(com.vouchq.registry.SourceDeletionService.class);
+        controller = new SourcesController(ingestion, rescan, sources, cipher, currentOrg, sourceDeletion);
     }
 
     @Test

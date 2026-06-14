@@ -58,6 +58,16 @@ vouchq:
     # previous finishes, so runs never overlap.
     interval-ms: ${VOUCHQ_RESCAN_INTERVAL_MS:3600000}
     initial-delay-ms: ${VOUCHQ_RESCAN_INITIAL_DELAY_MS:60000}
+  # MA3-97 — data-retention / pruning. Trims superseded tool_version + scan_result
+  # rows; always keeps each tool's current + every approved/pinned version + the N
+  # newest per tool, and never touches the WORM audit log. Disabled by default (no
+  # background deletes unless opted in).
+  retention:
+    enabled: ${VOUCHQ_RETENTION_ENABLED:false}
+    tool-version-keep-days: ${VOUCHQ_RETENTION_KEEP_DAYS:90}
+    tool-version-min-per-tool: ${VOUCHQ_RETENTION_MIN_PER_TOOL:20}
+    interval-ms: ${VOUCHQ_RETENTION_INTERVAL_MS:86400000}
+    initial-delay-ms: ${VOUCHQ_RETENTION_INITIAL_DELAY_MS:300000}
   notify:
     webhook:
       enabled: ${VOUCHQ_NOTIFY_WEBHOOK_ENABLED:false}

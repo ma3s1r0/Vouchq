@@ -5,6 +5,7 @@ import com.vouchq.notify.EmailProperties;
 import com.vouchq.notify.SlackProperties;
 import com.vouchq.notify.WebhookProperties;
 import com.vouchq.policy.PolicyProperties;
+import com.vouchq.retention.RetentionProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,7 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @EnableConfigurationProperties({WebhookProperties.class, SlackProperties.class, EmailProperties.class,
-        PolicyProperties.class, CredentialProperties.class})
+        PolicyProperties.class, CredentialProperties.class, RetentionProperties.class})
 public class VouchqApplication {
     public static void main(String[] args) {
         SpringApplication.run(VouchqApplication.class, args);
