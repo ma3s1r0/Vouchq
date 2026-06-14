@@ -193,6 +193,38 @@ public final class ApiDtos {
     public record McpInstallView(String name, String url, int approvedTools,
                                  int totalTools, OffsetDateTime vouchedAt) {}
 
+    // ── Group one-click install (MA3-137/138, vouched-out distribution) ──
+    // A source (repo) registers many Skills; these describe the pinned install
+    // "lock" for that whole group. Only APPROVED + pinned skills are included;
+    // PENDING / DRIFTED / BLOCKED are reported in {@code excluded} for honesty.
+
+    /** Which source the manifest is for (id + raw uri + readable label). */
+    public record InstallSourceRef(UUID id, String uri, String label) {}
+
+    /** One file of a pinned skill — path + its content hash (content fetched separately). */
+    public record InstallFile(String path, String sha256) {}
+
+    /** One APPROVED + pinned skill in the group, with its files. */
+    public record InstallSkill(String name, String versionHash,
+                               OffsetDateTime approvedAt, List<InstallFile> files) {}
+
+    /** Counts of skills left out of the install because they aren't approved. */
+    public record InstallExcluded(int pending, int drifted, int blocked) {
+        public int total() {
+            return pending + drifted + blocked;
+        }
+    }
+
+    /**
+     * {@code GET /api/sources/{id}/install/manifest}: the install "lock" for a
+     * source group — the exact pinned skills + per-file hashes a client installs
+     * (verified against vouchq-stored bytes, no origin re-clone). The companion
+     * {@code install.sh} bakes this plan into a POSIX script.
+     */
+    public record InstallManifest(String vouchq, InstallSourceRef source,
+                                  OffsetDateTime generatedAt, List<InstallSkill> skills,
+                                  InstallExcluded excluded) {}
+
     /** {@code POST /api/tools/{id}/approve} body. */
     public record ApproveRequest(String approvedBy) {}
 
