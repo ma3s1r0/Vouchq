@@ -56,6 +56,9 @@ class RbacSecuritySliceTest {
     @MockBean com.vouchq.registry.ScanResultRepository scanResults;
     @MockBean DriftEventRepository driftEvents;
     @MockBean com.vouchq.api.ScanViewAssembler scanViews;
+    // ToolsController also depends on these (MCP-install view, MA3-110).
+    @MockBean com.vouchq.registry.RegisteredServerRepository registeredServers;
+    @MockBean com.vouchq.registry.SourceRepository sources;
     @MockBean CurrentOrg currentOrg;
     // SecurityConfig#authenticationManager needs a UserDetailsService bean.
     @MockBean DbUserDetailsService userDetailsService;
