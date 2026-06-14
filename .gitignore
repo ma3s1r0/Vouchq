@@ -19,5 +19,6 @@ build/
 # Local Claude Code config (agents, skills, settings, worktrees) — not tracked
 .claude/
 
-# Docs are kept out of git (internal spec lived here) — not tracked
-docs/
+# Internal-only product spec stays out of git; public docs (threat-model,
+# comparison, self-hosting) ARE tracked.
+docs/Vouchq-기획서.md
