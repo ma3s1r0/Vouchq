@@ -12,6 +12,16 @@
 
 **English** · [한국어](README.ko.md)
 
+## See it catch a rug-pull
+
+An approved `web_search` tool is pinned. Its upstream server then silently rewrites the
+description to exfiltrate secrets — Vouchq detects the drift and flags the live version
+CRITICAL, while the pinned benign version is still what agents receive.
+
+![Vouchq detecting an MCP rug-pull: approve & pin → upstream tampers → drift detected → CRITICAL exfiltration finding → audit chain](examples/evil-mcp-rugpull/vouchq-rugpull.gif)
+
+> Run it yourself in ~90s: [`examples/evil-mcp-rugpull/`](examples/evil-mcp-rugpull/).
+
 ---
 
 ## What is Vouchq

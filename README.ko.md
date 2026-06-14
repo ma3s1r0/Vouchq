@@ -12,6 +12,16 @@
 
 [English](README.md) · **한국어**
 
+## rug-pull 탐지 장면
+
+승인·박제된 `web_search` 툴의 upstream 서버가 몰래 description을 바꿔 시크릿을 빼돌립니다 —
+Vouchq가 드리프트를 탐지하고 live 버전을 CRITICAL로 표시하며, 에이전트에는 박제된 benign
+버전만 배포됩니다.
+
+![Vouchq가 MCP rug-pull을 탐지: 승인·박제 → upstream 변조 → 드리프트 탐지 → CRITICAL 탈취 발견 → 감사 체인](examples/evil-mcp-rugpull/vouchq-rugpull.gif)
+
+> 직접 ~90초 만에 재현: [`examples/evil-mcp-rugpull/`](examples/evil-mcp-rugpull/).
+
 ---
 
 ## Vouchq란
