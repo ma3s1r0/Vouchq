@@ -288,6 +288,9 @@ export interface ApiServerView {
 export interface ApiToolView {
   id: string;
   serverId: string;
+  /** Originating source (Git repo / MCP server) — for grouping the inventory (MA3-135). */
+  sourceId: string | null;
+  sourceUri: string | null;
   kind: string;
   name: string;
   status: string;

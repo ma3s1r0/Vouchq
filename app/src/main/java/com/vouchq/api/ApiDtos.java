@@ -90,7 +90,11 @@ public final class ApiDtos {
                            UUID currentVersionId, UUID approvedVersionId,
                            Integer riskScore, String highestSeverity,
                            Integer effectiveRiskScore, String effectiveHighestSeverity,
-                           OffsetDateTime updatedAt) {
+                           OffsetDateTime updatedAt,
+                           // The originating source (Git repo / MCP server). Lets the
+                           // console group the inventory by source (MA3-135) — a repo
+                           // can register many skills. Null until enriched by the caller.
+                           UUID sourceId, String sourceUri) {
         public static ToolView from(Tool t) {
             return from(t, null, null, null);
         }
@@ -107,7 +111,14 @@ public final class ApiDtos {
                     scan == null ? null : scan.getRiskScore(),
                     scan == null ? null : scan.getHighestSeverity(),
                     effectiveRiskScore, effectiveHighestSeverity,
-                    t.getUpdatedAt());
+                    t.getUpdatedAt(), null, null);
+        }
+
+        /** Copy with the resolved source (tool → server → source), batched by the caller. */
+        public ToolView withSource(UUID sourceId, String sourceUri) {
+            return new ToolView(id, serverId, kind, name, status, currentVersionId, approvedVersionId,
+                    riskScore, highestSeverity, effectiveRiskScore, effectiveHighestSeverity,
+                    updatedAt, sourceId, sourceUri);
         }
     }
 

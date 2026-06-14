@@ -146,6 +146,9 @@ const DICT: Record<string, { en: string; ko: string }> = {
   // inventory
   "inventory.search": { en: "search name, version, source…", ko: "이름·버전·소스 검색…" },
   "inventory.versionRef": { en: "ver", ko: "버전" },
+  "inventory.viewMode": { en: "View mode", ko: "보기 방식" },
+  "inventory.grouped": { en: "By source", ko: "소스별" },
+  "inventory.flat": { en: "Flat", ko: "전체 목록" },
   "filter.all": { en: "ALL", ko: "전체" },
   "inventory.filter.kind": { en: "Kind", ko: "유형" },
   "inventory.filter.status": { en: "Status", ko: "상태" },

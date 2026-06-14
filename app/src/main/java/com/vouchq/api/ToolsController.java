@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Tool/Skill inventory, detail, and approve/block lifecycle (기획서 §8).
@@ -94,6 +96,15 @@ public class ToolsController {
         Tool.Kind kindFilter = parseEnum(Tool.Kind.class, kind, "kind");
         Tool.Status statusFilter = parseEnum(Tool.Status.class, status, "status");
 
+        // Resolve tool → source in one shot (server/source tables are small): a Git
+        // repo registers many skills, so the console groups the inventory by source
+        // (MA3-135). serverId → sourceId → uri, applied per tool below (no N+1).
+        Map<UUID, UUID> serverToSource = registeredServers.findByOrgIdOrderByCreatedAtDesc(orgId)
+                .stream().collect(Collectors.toMap(RegisteredServer::getId,
+                        RegisteredServer::getSourceId, (a, b) -> a));
+        Map<UUID, String> sourceUri = sources.findByOrgIdOrderByCreatedAtDesc(orgId)
+                .stream().collect(Collectors.toMap(Source::getId, Source::getUri, (a, b) -> a));
+
         if (limit != null && limit > 0) {
             String qF = (q == null || q.isBlank()) ? null : q.trim();
             int size = Math.min(limit, 500);
@@ -101,14 +112,21 @@ public class ToolsController {
             List<ApiDtos.ToolView> items = tools
                     .searchPage(orgId, kindFilter, statusFilter, qF,
                             org.springframework.data.domain.PageRequest.of(pageIdx, size))
-                    .stream().map(t -> toolView(orgId, t)).toList();
+                    .stream().map(t -> withSource(toolView(orgId, t), t, serverToSource, sourceUri)).toList();
             long total = tools.countSearch(orgId, kindFilter, statusFilter, qF);
             return ResponseEntity.ok().header("X-Total-Count", Long.toString(total)).body(items);
         }
 
         List<ApiDtos.ToolView> all = tools.search(orgId, kindFilter, statusFilter).stream()
-                .map(t -> toolView(orgId, t)).toList();
+                .map(t -> withSource(toolView(orgId, t), t, serverToSource, sourceUri)).toList();
         return ResponseEntity.ok().header("X-Total-Count", Long.toString(all.size())).body(all);
+    }
+
+    /** Attach the tool's source (server → source) to its view, from prebuilt maps. */
+    private static ApiDtos.ToolView withSource(ApiDtos.ToolView view, Tool tool,
+            Map<UUID, UUID> serverToSource, Map<UUID, String> sourceUri) {
+        UUID src = serverToSource.get(tool.getServerId());
+        return view.withSource(src, src == null ? null : sourceUri.get(src));
     }
 
     /** Detail: current + pinned definition, full version history, open drift events. */

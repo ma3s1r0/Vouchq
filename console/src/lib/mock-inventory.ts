@@ -35,6 +35,9 @@ export interface InventoryItem {
    */
   versionRef: string;
   kind: AssetKind;
+  /** Stable grouping key — the originating source id (null if unresolved). */
+  sourceId: string | null;
+  /** Human source label (repo short name / MCP host) derived from the source uri. */
   source: string;
   status: AssetStatus;
   /**
@@ -80,18 +83,35 @@ function mapToolView(t: ApiToolView): InventoryItem {
     name: t.name,
     versionRef,
     kind,
-    // API does not expose source name on ToolView (requires a server/source join).
-    // LOCAL FALLBACK: use serverId until the API enriches ToolView.
-    source: t.serverId ?? "—",
+    sourceId: t.sourceId ?? null,
+    source: sourceLabel(t.sourceUri),
     status,
     risk,
     lastVerified: t.updatedAt,
   };
 }
 
-/** Distinct source count, for the toolbar result line. */
+/** A readable source label: repo short-name for Git (drops .git), host for MCP. */
+export function sourceLabel(uri: string | null | undefined): string {
+  if (!uri) return "—";
+  try {
+    if (/^https?:\/\//.test(uri) || uri.includes("://")) {
+      const u = new URL(uri);
+      const path = u.pathname.replace(/\.git$/, "").replace(/\/+$/, "");
+      const last = path.split("/").filter(Boolean).pop();
+      return last || u.host;
+    }
+  } catch {
+    /* not a parseable URL — fall through */
+  }
+  // git@github.com:acme/agent-tools.git or a bare path
+  const stripped = uri.replace(/\.git$/, "").replace(/\/+$/, "");
+  return stripped.split(/[/:]/).filter(Boolean).pop() || uri;
+}
+
+/** Distinct source count, for the toolbar result line (by real source id). */
 export function sourceCount(items: InventoryItem[]): number {
-  return new Set(items.map((i) => i.source)).size;
+  return new Set(items.map((i) => i.sourceId ?? i.source)).size;
 }
 
 /**

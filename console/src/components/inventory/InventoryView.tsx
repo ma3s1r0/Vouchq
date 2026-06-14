@@ -101,6 +101,9 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
   const [risk, setRisk] = useState<RiskFilter>("ALL");
   const [rescanning, setRescanning] = useState(false);
   const [page, setPage] = useState(0);
+  // A repo registers many skills, so group the inventory by source by default
+  // (MA3-135); a toggle drops back to the flat, paginated list.
+  const [grouped, setGrouped] = useState(true);
   // Any filter/search change returns to the first page.
   useEffect(() => {
     setPage(0);
@@ -152,14 +155,87 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
     [filtered, page],
   );
 
-  const TABLE_COLS = [
-    t("inventory.col.name"),
-    t("inventory.col.kind"),
-    t("inventory.col.source"),
-    t("inventory.col.status"),
-    t("inventory.col.risk"),
-    t("inventory.col.lastVerified"),
-  ];
+  // Group the filtered items by their source, newest-ish first by label.
+  const groups = useMemo(() => {
+    const map = new Map<string, InventoryItem[]>();
+    for (const it of filtered) {
+      const key = it.sourceId ?? it.source ?? "—";
+      const bucket = map.get(key);
+      if (bucket) bucket.push(it);
+      else map.set(key, [it]);
+    }
+    return [...map.entries()]
+      .map(([key, list]) => ({ key, label: list[0].source, items: list }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [filtered]);
+
+  const tableHead = (showSource: boolean) => (
+    <thead>
+      <tr>
+        {[
+          t("inventory.col.name"),
+          t("inventory.col.kind"),
+          ...(showSource ? [t("inventory.col.source")] : []),
+          t("inventory.col.status"),
+          t("inventory.col.risk"),
+          t("inventory.col.lastVerified"),
+        ].map((h) => (
+          <th
+            key={h}
+            scope="col"
+            className="border-b border-border bg-sidebar px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-dim"
+          >
+            {h}
+          </th>
+        ))}
+      </tr>
+    </thead>
+  );
+
+  const renderRow = (it: InventoryItem, showSource: boolean) => (
+    <tr key={it.id} className="border-b border-border last:border-b-0 hover:bg-surface-2">
+      <td className="max-w-[280px] px-4 py-[11px]">
+        <Link
+          href={`/inventory/${encodeURIComponent(it.id)}`}
+          className="block font-semibold text-text hover:underline"
+        >
+          <span className="block truncate" title={it.name}>{it.name}</span>
+          <span className="block font-mono text-[11px] font-normal text-dim">
+            {t("inventory.versionRef")} {it.versionRef}
+          </span>
+        </Link>
+      </td>
+      <td className="px-4 py-[11px]">
+        <span className="rounded border border-border px-1.5 py-0.5 font-mono text-[11px] text-muted">
+          {it.kind}
+        </span>
+      </td>
+      {showSource && (
+        <td className="px-4 py-[11px] font-mono text-[12px] text-muted">{it.source}</td>
+      )}
+      <td className="px-4 py-[11px]"><StatusBadge status={it.status} /></td>
+      <td className="px-4 py-[11px]"><RiskMeter risk={it.risk} /></td>
+      <td className="px-4 py-[11px] text-[12px] text-dim">{it.lastVerified}</td>
+    </tr>
+  );
+
+  // Concerning-status chips for a group header (approved is the calm default).
+  const groupChips = (list: InventoryItem[]) => {
+    const c: Record<string, number> = {};
+    for (const it of list) c[it.status] = (c[it.status] ?? 0) + 1;
+    const tone: Record<string, string> = {
+      DRIFTED: "text-drift",
+      BLOCKED: "text-crit",
+      PENDING: "text-warn",
+    };
+    return (["DRIFTED", "BLOCKED", "PENDING"] as const)
+      .filter((s) => c[s])
+      .map((s) => (
+        <span key={s} className={`font-mono text-[11px] ${tone[s]}`}>
+          {c[s]} {s.toLowerCase()}
+        </span>
+      ));
+  };
 
   // First run (no assets at all) → onboarding, distinct from a no-match filter.
   if (items.length === 0) {
@@ -207,7 +283,29 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
           format={(v) => (v === "ALL" ? t("filter.all") : `≥ ${v}`)}
         />
 
-        <span className="ml-auto whitespace-nowrap font-mono text-[12px] text-dim">
+        <div
+          className="ml-auto inline-flex rounded-lg border border-border bg-surface-2 p-0.5 text-[12px] font-semibold"
+          role="group"
+          aria-label={t("inventory.viewMode")}
+        >
+          <button
+            type="button"
+            onClick={() => setGrouped(true)}
+            aria-pressed={grouped}
+            className={`rounded-md px-2.5 py-1 transition-colors ${grouped ? "bg-primary/[0.14] text-[#9DC3FF]" : "text-muted hover:text-text"}`}
+          >
+            {t("inventory.grouped")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setGrouped(false)}
+            aria-pressed={!grouped}
+            className={`rounded-md px-2.5 py-1 transition-colors ${!grouped ? "bg-primary/[0.14] text-[#9DC3FF]" : "text-muted hover:text-text"}`}
+          >
+            {t("inventory.flat")}
+          </button>
+        </div>
+        <span className="whitespace-nowrap font-mono text-[12px] text-dim">
           <b className="text-text">{filtered.length}</b> {t("inventory.assets")} ·{" "}
           <b className="text-text">{sourceCount(items)}</b> {t("inventory.sources")}
         </span>
@@ -222,74 +320,45 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-[11px] border border-border bg-surface">
-        <table className="w-full border-collapse text-[13px]">
-          <thead>
-            <tr>
-              {TABLE_COLS.map((h) => (
-                <th
-                  key={h}
-                  scope="col"
-                  className="border-b border-border bg-sidebar px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-dim"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {paged.map((it) => (
-              <tr
-                key={it.id}
-                className="border-b border-border last:border-b-0 hover:bg-surface-2"
-              >
-                <td className="max-w-[280px] px-4 py-[11px]">
-                  <Link
-                    href={`/inventory/${encodeURIComponent(it.id)}`}
-                    className="block font-semibold text-text hover:underline"
-                  >
-                    <span className="block truncate" title={it.name}>
-                      {it.name}
-                    </span>
-                    <span className="block font-mono text-[11px] font-normal text-dim">
-                      {t("inventory.versionRef")} {it.versionRef}
-                    </span>
-                  </Link>
-                </td>
-                <td className="px-4 py-[11px]">
-                  <span className="rounded border border-border px-1.5 py-0.5 font-mono text-[11px] text-muted">
-                    {it.kind}
-                  </span>
-                </td>
-                <td className="px-4 py-[11px] font-mono text-[12px] text-muted">
-                  {it.source}
-                </td>
-                <td className="px-4 py-[11px]">
-                  <StatusBadge status={it.status} />
-                </td>
-                <td className="px-4 py-[11px]">
-                  <RiskMeter risk={it.risk} />
-                </td>
-                <td className="px-4 py-[11px] text-[12px] text-dim">
-                  {it.lastVerified}
-                </td>
-              </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-10 text-center text-[13px] text-dim"
-                >
-                  {t("inventory.empty")}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <Pager page={page} pageSize={PAGE_SIZE} total={filtered.length} onPage={setPage} />
+      {filtered.length === 0 ? (
+        <div className="rounded-[11px] border border-border bg-surface px-4 py-10 text-center text-[13px] text-dim">
+          {t("inventory.empty")}
+        </div>
+      ) : grouped ? (
+        // One collapsible card per source — a repo's many skills are grouped (MA3-135).
+        <div className="flex flex-col gap-3">
+          {groups.map((g) => (
+            <details
+              key={g.key}
+              open
+              className="overflow-hidden rounded-[11px] border border-border bg-surface [&[open]>summary_.chev]:rotate-90"
+            >
+              <summary className="flex cursor-pointer list-none items-center gap-3 border-b border-border bg-sidebar px-4 py-3 hover:bg-surface-2">
+                <span aria-hidden className="chev font-mono text-[11px] text-dim transition-transform">▸</span>
+                <span className="truncate font-semibold text-text" title={g.label}>{g.label}</span>
+                <span className="font-mono text-[11px] text-dim">
+                  {g.items.length} {t("inventory.assets")}
+                </span>
+                <span className="ml-auto flex items-center gap-2.5">{groupChips(g.items)}</span>
+              </summary>
+              <table className="w-full border-collapse text-[13px]">
+                {tableHead(false)}
+                <tbody>{g.items.map((it) => renderRow(it, false))}</tbody>
+              </table>
+            </details>
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="overflow-hidden rounded-[11px] border border-border bg-surface">
+            <table className="w-full border-collapse text-[13px]">
+              {tableHead(true)}
+              <tbody>{paged.map((it) => renderRow(it, true))}</tbody>
+            </table>
+          </div>
+          <Pager page={page} pageSize={PAGE_SIZE} total={filtered.length} onPage={setPage} />
+        </>
+      )}
     </div>
   );
 }
