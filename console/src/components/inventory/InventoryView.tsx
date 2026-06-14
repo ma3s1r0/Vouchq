@@ -15,6 +15,7 @@ import { StatusBadge } from "./StatusBadge";
 import { RiskMeter } from "./RiskMeter";
 import { Onboarding } from "@/components/shell/Onboarding";
 import { Pager } from "@/components/shell/Pager";
+import { Select } from "@/components/shell/Select";
 import { useToast } from "@/lib/feedback";
 import { useT } from "@/lib/i18n";
 
@@ -53,38 +54,6 @@ const BAND_RANK: Record<ReturnType<typeof riskBand>, number> = {
   WARN: 2,
   CRITICAL: 3,
 };
-
-/** A select styled like the design-system `.sel` chip. */
-function FilterSelect<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-  format,
-}: {
-  label: string;
-  value: T;
-  options: T[];
-  onChange: (v: T) => void;
-  format?: (v: T) => string;
-}) {
-  return (
-    <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2.5 py-[7px] text-[12px] text-muted">
-      {label}
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value as T)}
-        className="cursor-pointer appearance-none bg-transparent font-semibold text-text outline-none"
-      >
-        {options.map((o) => (
-          <option key={o} value={o} className="bg-surface text-text">
-            {format ? format(o) : o}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
 
 export function InventoryView({ items }: { items: InventoryItem[] }) {
   const router = useRouter();
@@ -261,21 +230,21 @@ export function InventoryView({ items }: { items: InventoryItem[] }) {
           />
         </div>
 
-        <FilterSelect
+        <Select
           label={t("inventory.filter.kind")}
           value={kind}
           options={KIND_OPTIONS}
           onChange={setKind}
           format={(v) => (v === "ALL" ? t("filter.all") : v)}
         />
-        <FilterSelect
+        <Select
           label={t("inventory.filter.status")}
           value={status}
           options={STATUS_OPTIONS}
           onChange={setStatus}
           format={(v) => (v === "ALL" ? t("filter.all") : v)}
         />
-        <FilterSelect
+        <Select
           label={t("inventory.filter.risk")}
           value={risk}
           options={RISK_OPTIONS}

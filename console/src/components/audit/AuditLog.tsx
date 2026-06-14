@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, type ApiAuditLogView, type ApiAuditVerify } from "@/lib/api";
 import { useT } from "@/lib/i18n";
 import { Pager } from "@/components/shell/Pager";
+import { Select } from "@/components/shell/Select";
 
 /** Chip color per action kind; unknown actions fall back to a neutral chip. */
 const CHIP: Record<string, string> = {
@@ -142,8 +143,10 @@ export function AuditLog() {
     [seenActors, actor],
   );
 
-  const selectCls =
-    "inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2.5 py-[7px] text-[12px] text-muted";
+  // "ALL" + known/seen values, feeding the custom dark dropdowns (MA3-136).
+  const actionChoices = useMemo(() => ["ALL", ...KNOWN_ACTIONS], []);
+  const actorChoices = useMemo(() => ["ALL", ...actorOptions], [actorOptions]);
+
   const exportBtn =
     "rounded-lg border border-border-strong bg-transparent px-3 py-[7px] text-[12px] font-semibold text-text hover:border-primary";
 
@@ -151,43 +154,23 @@ export function AuditLog() {
     <div className="flex max-w-[760px] flex-col gap-3">
       {/* filter bar */}
       <div className="flex flex-wrap items-center gap-2.5 rounded-[11px] border border-border bg-surface px-3.5 py-3">
-        <label className={selectCls}>
-          {t("audit.filter.action")}
-          <select
-            value={action}
-            onChange={(e) => onFilter(setAction)(e.target.value)}
-            className="cursor-pointer appearance-none bg-transparent font-semibold text-text outline-none"
-          >
-            <option value="ALL" className="bg-surface">
-              {t("audit.allActions")}
-            </option>
-            {KNOWN_ACTIONS.map((a) => (
-              <option key={a} value={a} className="bg-surface">
-                {a}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label={t("audit.filter.action")}
+          value={action}
+          options={actionChoices}
+          onChange={(v) => onFilter(setAction)(v)}
+          format={(v) => (v === "ALL" ? t("audit.allActions") : v)}
+        />
 
-        <label className={selectCls}>
-          {t("audit.filter.actor")}
-          <select
-            value={actor}
-            onChange={(e) => onFilter(setActor)(e.target.value)}
-            className="cursor-pointer appearance-none bg-transparent font-semibold text-text outline-none"
-          >
-            <option value="ALL" className="bg-surface">
-              {t("audit.allActors")}
-            </option>
-            {actorOptions.map((a) => (
-              <option key={a} value={a} className="bg-surface">
-                {a}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label={t("audit.filter.actor")}
+          value={actor}
+          options={actorChoices}
+          onChange={(v) => onFilter(setActor)(v)}
+          format={(v) => (v === "ALL" ? t("audit.allActors") : v)}
+        />
 
-        <label className={selectCls}>
+        <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2.5 py-[7px] text-[12px] text-muted">
           {t("audit.filter.since")}
           <input
             type="date"
