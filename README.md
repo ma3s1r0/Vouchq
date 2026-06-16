@@ -4,7 +4,7 @@
 > An approved MCP server or Skill can silently change its tool definitions *after* you trust it. Vouchq snapshots the approved definition, pins it by SHA-256 (박제), and raises a drift event the moment the live definition diverges — with a tamper-evident audit trail. Register · Scan · Approve & Pin · Detect drift · Audit.
 
 [![Release](https://img.shields.io/github/v/release/ma3s1r0/Vouchq?include_prereleases&color=388BFD)](https://github.com/ma3s1r0/Vouchq/releases)
-[![Website](https://img.shields.io/badge/website-vouchq.is--a.dev-388BFD)](https://ma3s1r0.github.io/vouchq-website)
+[![Website](https://img.shields.io/badge/website-vouchq-388BFD)](https://ma3s1r0.github.io/vouchq-website)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-3FB950)](LICENSE)
 [![Java 21](https://img.shields.io/badge/Java-21-388BFD)](https://openjdk.org/projects/jdk/21/)
 [![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3-3FB950)](https://spring.io/projects/spring-boot)
