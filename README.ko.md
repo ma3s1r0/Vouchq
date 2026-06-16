@@ -3,8 +3,8 @@
 > **MCP 도구를 위한 프라이빗 신뢰 레지스트리. 한 번 승인하고, 암호학적으로 박제하고, rug-pull을 영구히 탐지하세요.**
 > 승인된 MCP 서버·Skill은 신뢰한 *이후에* tool 정의를 몰래 바꿀 수 있습니다. Vouchq는 승인 시점 정의를 스냅샷해 SHA-256으로 박제(pin)하고, live 정의가 어긋나는 순간 drift 이벤트를 발생시킵니다 — 변조 불가능한 감사 추적과 함께. 등록 · 스캔 · 승인&박제 · 드리프트 탐지 · 감사.
 
-[![Release](https://img.shields.io/github/v/release/ma3s1r0/Vouchq?include_prereleases&color=388BFD)](https://github.com/ma3s1r0/Vouchq/releases)
-[![Website](https://img.shields.io/badge/website-vouchq.is--a.dev-388BFD)](https://vouchq.is-a.dev)
+[![Release](https://img.shields.io/github/v/tag/ma3s1r0/Vouchq?filter=v*&sort=semver&color=388BFD)](https://github.com/ma3s1r0/Vouchq/releases/tag/v0.1.0-alpha)
+[![Website](https://img.shields.io/badge/website-vouchq-388BFD)](https://ma3s1r0.github.io/vouchq-website)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-3FB950)](LICENSE)
 [![Java 21](https://img.shields.io/badge/Java-21-388BFD)](https://openjdk.org/projects/jdk/21/)
 [![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3-3FB950)](https://spring.io/projects/spring-boot)
