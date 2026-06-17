@@ -54,6 +54,7 @@ public class ToolsController {
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
     private final RegisteredServerRepository registeredServers;
     private final SourceRepository sources;
+    private final com.vouchq.sentinel.RulesetHealth rulesetHealth;
 
     public ToolsController(ApprovalService approval,
                           ToolRepository tools,
@@ -65,7 +66,9 @@ public class ToolsController {
                           ScanViewAssembler scanViews,
                           com.fasterxml.jackson.databind.ObjectMapper objectMapper,
                           RegisteredServerRepository registeredServers,
-                          SourceRepository sources) {
+                          SourceRepository sources,
+                          com.vouchq.sentinel.RulesetHealth rulesetHealth) {
+        this.rulesetHealth = rulesetHealth;
         this.approval = approval;
         this.tools = tools;
         this.toolVersions = toolVersions;
@@ -252,6 +255,9 @@ public class ToolsController {
     public ApiDtos.ApprovedVersionView approve(@PathVariable UUID id,
                                                @RequestBody(required = false) ApiDtos.ApproveRequest req) {
         // RBAC (MA3-71): MEMBER/ADMIN only — enforced in SecurityConfig (POST /api/**).
+        // Sentinel: refuse to mint new trust while the scanner's ruleset self-test
+        // is failing — vouchq won't vouch when it can't trust its own detection.
+        rulesetHealth.requireHealthy();
         UUID orgId = currentOrg.require();
         String approvedBy = (req == null || req.approvedBy() == null || req.approvedBy().isBlank())
                 ? "system" : req.approvedBy();

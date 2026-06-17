@@ -59,6 +59,9 @@ class RbacSecuritySliceTest {
     // ToolsController also depends on these (MCP-install view, MA3-110).
     @MockBean com.vouchq.registry.RegisteredServerRepository registeredServers;
     @MockBean com.vouchq.registry.SourceRepository sources;
+    // Sentinel gate on approve (ruleset self-test) — mocked here; this slice
+    // exercises RBAC at the boundary, not ruleset health.
+    @MockBean com.vouchq.sentinel.RulesetHealth rulesetHealth;
     @MockBean CurrentOrg currentOrg;
     // SecurityConfig#authenticationManager needs a UserDetailsService bean.
     @MockBean DbUserDetailsService userDetailsService;

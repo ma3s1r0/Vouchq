@@ -39,6 +39,11 @@ public final class RegexRule implements Rule {
         return severity;
     }
 
+    /** The source regex — used to fingerprint the rule set (ruleset self-test). */
+    public String pattern() {
+        return pattern.pattern();
+    }
+
     @Override
     public String match(String line) {
         Matcher m = pattern.matcher(line);

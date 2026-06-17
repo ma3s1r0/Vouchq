@@ -34,4 +34,12 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiDtos.ApiError("conflict", ex.getMessage()));
     }
+
+    /** Ruleset self-test failing → 503: vouchq won't mint trust it can't stand behind. */
+    @ExceptionHandler(com.vouchq.sentinel.RulesetDegradedException.class)
+    public ResponseEntity<ApiDtos.ApiError> handleRulesetDegraded(
+            com.vouchq.sentinel.RulesetDegradedException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ApiDtos.ApiError("ruleset_degraded", ex.getMessage()));
+    }
 }

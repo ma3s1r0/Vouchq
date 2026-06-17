@@ -245,6 +245,18 @@ public final class ApiDtos {
      */
     public record VerifyResult(boolean pass, int total, int approved, List<VerifyItem> items) {}
 
+    // ── Ruleset self-test / Sentinel (vouchq governing its own scanner) ──
+
+    /**
+     * {@code GET /api/ruleset/health}: the live ruleset self-test verdict. {@code
+     * state} is HEALTHY / DEGRADED; {@code rulesetHash} fingerprints the active
+     * rules; {@code failedCanaries} names any known-malicious fixture the scanner
+     * failed to flag (empty when healthy).
+     */
+    public record RulesetHealthView(String state, String rulesetHash,
+                                    OffsetDateTime lastCheckedAt, int canaryTotal,
+                                    int canaryFailed, List<String> failedCanaries) {}
+
     /** {@code POST /api/tools/{id}/approve} body. */
     public record ApproveRequest(String approvedBy) {}
 
