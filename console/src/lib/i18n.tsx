@@ -168,6 +168,7 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "install.title": { en: "Install vouched skills", ko: "보증된 스킬 설치" },
   "install.subtitle": { en: "Installs only approved, pinned skills from", ko: "승인·박제된 스킬만 설치합니다 —" },
   "install.run": { en: "Run this in your project root:", ko: "프로젝트 루트에서 실행하세요:" },
+  "install.runUser": { en: "Run this anywhere:", ko: "어디서든 실행하세요:" },
   "install.copy": { en: "Copy", ko: "복사" },
   "install.copied": { en: "Copied to clipboard.", ko: "클립보드에 복사했습니다." },
   "install.copyFailed": { en: "Couldn't copy — select and copy manually.", ko: "복사하지 못했습니다. 직접 선택해 복사하세요." },
@@ -177,6 +178,13 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "install.target": { en: "into", ko: "→ 설치 위치" },
   "install.targetAs": { en: "as", ko: "→" },
   "install.targetLabel": { en: "Install into", ko: "설치 대상 에이전트" },
+  "install.scopeLabel": { en: "Scope", ko: "설치 범위" },
+  "install.scopeProject": { en: "Project", ko: "프로젝트" },
+  "install.scopeUser": { en: "User (global)", ko: "사용자(전역)" },
+  "install.cursorUserNote": {
+    en: "Cursor has no file-based user scope — user rules are set in Cursor settings.",
+    ko: "Cursor는 파일 기반 사용자 범위가 없습니다 — 사용자 룰은 Cursor 설정에서 직접 입력합니다.",
+  },
   "install.cursorNote": {
     en: "Each skill's SKILL.md becomes a Cursor rule; bundled scripts are not installed (Cursor rules don't run scripts).",
     ko: "각 스킬의 SKILL.md가 Cursor 룰로 변환됩니다. 번들 스크립트는 설치되지 않습니다(Cursor 룰은 스크립트를 실행하지 않음).",

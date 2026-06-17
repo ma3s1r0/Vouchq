@@ -5,12 +5,19 @@ import type { InventoryItem } from "@/lib/mock-inventory";
 import { useToast } from "@/lib/feedback";
 import { useT } from "@/lib/i18n";
 
-/** Where an installed skill lands, per agent. */
+/** Which agent to install into, and project- vs user-global scope. */
 type Target = "claude" | "cursor";
-const TARGET_DIR: Record<Target, string> = {
-  claude: ".claude/skills/",
-  cursor: ".cursor/rules/",
-};
+type Scope = "project" | "user";
+
+/**
+ * Install directory per (target, scope). Claude installs as files in either
+ * scope; Cursor's file-based rules are project-only (user rules live in Cursor
+ * settings, not on disk), so its scope is fixed to project.
+ */
+function destDir(target: Target, scope: Scope): string {
+  if (target === "cursor") return ".cursor/rules/";
+  return scope === "user" ? "~/.claude/skills/" : ".claude/skills/";
+}
 
 /**
  * Group one-click install modal (MA3-139). Shows the copy-paste `curl | sh`
@@ -29,6 +36,13 @@ export function InstallModal({
   const { t } = useT();
   const toast = useToast();
   const [target, setTarget] = useState<Target>("claude");
+  const [scope, setScope] = useState<Scope>("project");
+
+  // Cursor has no file-based user scope — fall back to project if it was selected.
+  const pickTarget = (tg: Target) => {
+    setTarget(tg);
+    if (tg === "cursor") setScope("project");
+  };
 
   const skills = group.items.filter((i) => i.kind === "SKILL");
   const approved = skills.filter((i) => i.status === "APPROVED");
@@ -42,9 +56,9 @@ export function InstallModal({
   const command = useMemo(() => {
     if (!group.sourceId) return null;
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${origin}/api/sources/${group.sourceId}/install.sh?target=${target}`;
+    const url = `${origin}/api/sources/${group.sourceId}/install.sh?target=${target}&scope=${scope}`;
     return `curl -fsSL -u 'EMAIL:PASSWORD' '${url}' \\\n  | VOUCHQ_AUTH='EMAIL:PASSWORD' sh`;
-  }, [group.sourceId, target]);
+  }, [group.sourceId, target, scope]);
 
   // Escape closes; lock background scroll while open.
   useEffect(() => {
@@ -109,7 +123,7 @@ export function InstallModal({
                     <button
                       key={tg}
                       type="button"
-                      onClick={() => setTarget(tg)}
+                      onClick={() => pickTarget(tg)}
                       aria-pressed={target === tg}
                       className={`flex-1 rounded-md px-3 py-1.5 transition-colors ${
                         target === tg
@@ -119,18 +133,57 @@ export function InstallModal({
                     >
                       {tg === "claude" ? "Claude" : "Cursor"}
                       <span className="ml-1.5 font-mono text-[11px] font-normal opacity-70">
-                        {TARGET_DIR[tg]}
+                        {destDir(tg, scope)}
                       </span>
                     </button>
                   ))}
                 </div>
               </div>
 
+              {/* scope picker — project (./.claude) vs user (~/.claude) */}
+              <div>
+                <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-dim">
+                  {t("install.scopeLabel")}
+                </span>
+                <div
+                  className="mt-1.5 inline-flex w-full rounded-lg border border-border bg-surface-2 p-0.5 text-[13px] font-semibold"
+                  role="group"
+                  aria-label={t("install.scopeLabel")}
+                >
+                  {(["project", "user"] as const).map((sc) => {
+                    // Cursor file rules are project-only; disable user there.
+                    const disabled = target === "cursor" && sc === "user";
+                    return (
+                      <button
+                        key={sc}
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => setScope(sc)}
+                        aria-pressed={scope === sc}
+                        title={disabled ? t("install.cursorUserNote") : undefined}
+                        className={`flex-1 rounded-md px-3 py-1.5 transition-colors ${
+                          scope === sc && !disabled
+                            ? "bg-primary/[0.14] text-[#9DC3FF]"
+                            : disabled
+                              ? "cursor-not-allowed text-dim/50"
+                              : "text-muted hover:text-text"
+                        }`}
+                      >
+                        {sc === "project" ? t("install.scopeProject") : t("install.scopeUser")}
+                      </button>
+                    );
+                  })}
+                </div>
+                {target === "cursor" && (
+                  <p className="mt-1 text-[11.5px] text-dim">{t("install.cursorUserNote")}</p>
+                )}
+              </div>
+
               {/* the one-liner */}
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
                   <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-dim">
-                    {t("install.run")}
+                    {scope === "user" ? t("install.runUser") : t("install.run")}
                   </span>
                   <button
                     type="button"
@@ -152,7 +205,7 @@ export function InstallModal({
                   {t("install.willInstall")}{" "}
                   <b className="text-text">{approved.length}</b> {t("install.skills")}{" "}
                   {target === "cursor" ? t("install.targetAs") : t("install.target")}{" "}
-                  <span className="font-mono text-text">{TARGET_DIR[target]}</span>
+                  <span className="font-mono text-text">{destDir(target, scope)}</span>
                   {target === "cursor" && (
                     <span className="font-mono text-text">{`<name>.mdc`}</span>
                   )}

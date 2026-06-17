@@ -59,10 +59,21 @@ public class InstallController {
     @GetMapping(value = "/api/sources/{id}/install.sh", produces = "text/x-shellscript")
     public ResponseEntity<String> script(@PathVariable UUID id,
                                          @RequestParam(defaultValue = "claude") String target,
+                                         @RequestParam(defaultValue = "project") String scope,
                                          Authentication authentication) {
         String tgt = target.trim().toLowerCase();
         if (!tgt.equals("claude") && !tgt.equals("cursor")) {
             throw new IllegalArgumentException("Unknown install target: " + target + " (claude|cursor)");
+        }
+        String scp = scope.trim().toLowerCase();
+        if (!scp.equals("project") && !scp.equals("user")) {
+            throw new IllegalArgumentException("Unknown install scope: " + scope + " (project|user)");
+        }
+        // Cursor has no file-based user scope — user rules live in Cursor's app
+        // settings (text), not on disk. Only project (.cursor/rules/) is installable.
+        if (tgt.equals("cursor") && scp.equals("user")) {
+            throw new IllegalArgumentException(
+                    "Cursor has no file-based user scope — set Cursor user rules in app settings. Use scope=project.");
         }
         UUID orgId = currentOrg.require();
         ApiDtos.InstallManifest manifest = install.buildManifest(orgId, id);
@@ -72,7 +83,7 @@ public class InstallController {
         String base = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("text/x-shellscript"))
-                .body(renderScript(base, id, manifest, tgt));
+                .body(renderScript(base, id, manifest, tgt, scp));
     }
 
     /**
@@ -83,8 +94,9 @@ public class InstallController {
      * bundled scripts aren't installed (Cursor rules don't run scripts).
      */
     private static String renderScript(String base, UUID sourceId,
-                                       ApiDtos.InstallManifest m, String target) {
+                                       ApiDtos.InstallManifest m, String target, String scope) {
         boolean cursor = target.equals("cursor");
+        boolean userScope = scope.equals("user");
         StringBuilder plan = new StringBuilder();
         for (ApiDtos.InstallSkill skill : m.skills()) {
             if (cursor) {
@@ -104,7 +116,9 @@ public class InstallController {
                 ? "echo \"vouchq: nothing to install — no approved skills in this source.\"\n"
                 : plan.toString();
 
+        // Cursor: project rules only. Claude: project (./.claude) or user (~/.claude).
         String destDefault = cursor ? "${VOUCHQ_RULES_DIR:-.cursor/rules}"
+                : userScope ? "${VOUCHQ_SKILLS_DIR:-$HOME/.claude/skills}"
                 : "${VOUCHQ_SKILLS_DIR:-.claude/skills}";
         String writer = cursor ? CURSOR_WRITER : CLAUDE_WRITER;
         String installing = cursor ? "Cursor rules into" : "vouched skills into";
@@ -143,7 +157,8 @@ public class InstallController {
                 echo "vouchq: installing %s $DEST"
                 %s%s
                 echo "vouchq: done."
-                """.formatted(cursor ? "cursor" : "claude", label(m), sourceId,
+                """.formatted((cursor ? "cursor" : "claude") + ", " + scope + " scope",
+                        label(m), sourceId,
                         shquote(base), shquote(sourceId.toString()), destDefault,
                         writer, installing, excluded, body);
     }
