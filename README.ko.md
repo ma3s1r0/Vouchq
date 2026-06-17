@@ -40,7 +40,7 @@ Vouchq는 *우리 조직이 무엇을 어떤 버전으로 신뢰하기로 했는
 ## 핵심 기능
 
 ### 인제스천 & 인벤토리
-Git 저장소와 (Phase 1) MCP 서버를 연결하면, Vouchq의 OSS 파서가 Skill(`SKILL.md` + 스크립트)과 MCP 도구(`tools/list`)를 하나의 정의 모델로 정규화합니다. 에이전트가 닿을 수 있는 모든 기능을 종류·출처·상태·위험점수·마지막 검증 시점과 함께 검색 가능한 인벤토리로 만듭니다.
+Git 저장소와 MCP 서버를 연결하면, Vouchq의 OSS 파서가 Skill(`SKILL.md` + 스크립트)과 MCP 도구(`tools/list`)를 하나의 정의 모델로 정규화합니다. 에이전트가 닿을 수 있는 모든 기능을 종류·출처·상태·위험점수·마지막 검증 시점과 함께 검색 가능한 인벤토리로 만듭니다.
 
 ### 위험 스캔
 룰 기반 스캐너가 각 정의에서 **프롬프트 인젝션**·**시크릿 노출**·**데이터 유출**·**위험 명령**을 탐지해 0–100 위험 점수와 구조화된 탐지 결과를 냅니다. **오탐 억제**(룰/도구/개별 항목 단위)로 신호를 깨끗하게 유지하니 리뷰어가 점수를 믿을 수 있습니다. 스캐너는 순수 Java 오픈소스입니다.
@@ -176,7 +176,7 @@ docker compose -f compose.prod.yaml --env-file .env up -d --build
 
 Java 21 · Spring Boot 3 · PostgreSQL · Flyway · Gradle(멀티모듈) · 콘솔: Next.js(App Router) + TypeScript + Tailwind.
 
-**self-hosted 호환**(기획서 §7): 표준 의존성만, 외부 통신(텔레메트리·알림)은 전부 옵션·기본 off. 빌드는 멀티스테이지이며 런타임 이미지는 non-root로 read-only 실행됩니다. GitHub Actions가 매 push/PR마다 전 모듈 빌드 + Testcontainers 통합테스트 포함 전체 테스트 + 콘솔 빌드 + 컨테이너 이미지 스모크 빌드를 실행합니다.
+**self-hosted 호환:** 표준 의존성만, 외부 통신(텔레메트리·알림)은 전부 옵션·기본 off. 빌드는 멀티스테이지이며 런타임 이미지는 non-root로 read-only 실행됩니다. GitHub Actions가 매 push/PR마다 전 모듈 빌드 + Testcontainers 통합테스트 포함 전체 테스트 + 콘솔 빌드 + 컨테이너 이미지 스모크 빌드를 실행합니다.
 
 ---
 

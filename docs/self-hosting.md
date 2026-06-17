@@ -1,6 +1,6 @@
 # Self-hosting Vouchq (production)
 
-Vouchq is designed to run entirely inside your own infrastructure (기획서 §0.4 / §7).
+Vouchq is designed to run entirely inside your own infrastructure.
 A fresh instance makes **zero outbound calls** — every external integration
 (notifications, scheduled re-scan reaching out to sources) is opt-in. This guide
 is the runbook for a real deployment: secrets, first boot, backups, and upgrades.

@@ -40,7 +40,7 @@ It is **not** a discovery catalog ("what exists in the world") and **not** an in
 ## Key capabilities
 
 ### Ingestion & inventory
-Connect Git repositories and (Phase 1) MCP servers. Vouchq's OSS parser normalizes Skills (`SKILL.md` + scripts) and MCP tools (`tools/list`) into a single definition model and builds a searchable inventory of every capability your agents can reach — kind, source, status, risk, and last-verified time.
+Connect Git repositories and MCP servers. Vouchq's OSS parser normalizes Skills (`SKILL.md` + scripts) and MCP tools (`tools/list`) into a single definition model and builds a searchable inventory of every capability your agents can reach — kind, source, status, risk, and last-verified time.
 
 ### Risk scanning
 A rule-based scanner inspects each definition for **prompt injection**, **leaked secrets**, **data exfiltration**, and **dangerous commands**, producing a 0–100 risk score and structured findings. **False-positive suppression** (per-rule / per-tool / per-finding) keeps the signal high so reviewers trust the score. The scanner is pure Java and open source.
@@ -178,7 +178,7 @@ The hardened `compose.prod.yaml` covers secret generation (via `.env.prod.exampl
 
 Java 21 · Spring Boot 3 · PostgreSQL · Flyway · Gradle (multi-module) · Console: Next.js (App Router) + TypeScript + Tailwind.
 
-**Self-hosted-friendly** (spec §7): standard dependencies only; all outbound traffic (telemetry, notifications) is optional and **off by default**. The build is multi-stage and the runtime image runs read-only as a non-root user. GitHub Actions builds every module and runs the full test suite (including Testcontainers integration tests), the console build, and a container-image smoke build on each push/PR.
+**Self-hosted-friendly:** standard dependencies only; all outbound traffic (telemetry, notifications) is optional and **off by default**. The build is multi-stage and the runtime image runs read-only as a non-root user. GitHub Actions builds every module and runs the full test suite (including Testcontainers integration tests), the console build, and a container-image smoke build on each push/PR.
 
 ---
 
