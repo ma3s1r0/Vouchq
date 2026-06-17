@@ -193,10 +193,10 @@ Java 21 · Spring Boot 3 · PostgreSQL · Flyway · Gradle (multi-module) · Con
 
 ## Community & contributing
 
-Contributions are welcome across the whole stack — new scanner rules, parser coverage for more Skill / MCP shapes, test fixtures, and control-plane improvements. Open an issue or PR on **[ma3s1r0/Vouchq](https://github.com/ma3s1r0/Vouchq)**. Contributions are licensed under **AGPL-3.0-or-later**; a lightweight CLA/DCO may be requested so the project can keep offering a commercial license — see [`LICENSING.md`](LICENSING.md).
+Contributions are welcome across the whole stack — new scanner rules, parser coverage for more Skill / MCP shapes, test fixtures, and control-plane improvements. Open an issue or PR on **[ma3s1r0/Vouchq](https://github.com/ma3s1r0/Vouchq)**. Contributions are licensed under **AGPL-3.0-or-later** — the same terms as the rest of the project. See [`LICENSING.md`](LICENSING.md).
 
 ---
 
 ## License
 
-**Fully open source under [AGPL-3.0-or-later](LICENSE)** — the whole stack, libraries included. The AGPL's network clause keeps every part open even when run as a service. A separate commercial license is available for organizations that cannot accept the AGPL. Full rationale and terms: **[`LICENSING.md`](LICENSING.md)**.
+**Fully open source under [AGPL-3.0-or-later](LICENSE)** — the whole stack, libraries included. The AGPL's network clause keeps every part open even when run as a service. Full rationale: **[`LICENSING.md`](LICENSING.md)**.

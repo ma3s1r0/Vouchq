@@ -25,20 +25,11 @@ strong copyleft keeps every part open even when run as a service:
   interact with it over a network. Running an **unmodified** release for your own
   users imposes no source-distribution burden beyond the license notice.
 
-## Commercial license
-
-The copyright holder retains the right to offer Vouchq under a separate
-**commercial license** for organizations that cannot accept the AGPL's terms
-(e.g. internal policies that forbid AGPL software, or embedding it in a
-closed-source product or service). This dual-licensing path is intact — if you
-need it, open an issue or reach out.
-
 ## Contributing
 
 Contributions are welcome across the whole stack. By submitting a contribution
-you agree to license it under **AGPL-3.0-or-later**, and a lightweight CLA / DCO
-sign-off may be requested so the project can keep offering the commercial-license
-option above.
+you agree to license it under **AGPL-3.0-or-later** — the same terms as the rest
+of the project.
 
 ## SPDX identifier
 
