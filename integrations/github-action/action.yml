@@ -1,0 +1,61 @@
+name: "Vouchq verify"
+description: >-
+  Build gate (MA3-98): check that every Skill in the repo is an APPROVED + pinned
+  version in your Vouchq registry. Read-only — Vouchq stays a registry, never in
+  the request path; this is just a CI reader. Fails the job on any skill that is
+  not APPROVED (set advisory: true to warn instead).
+inputs:
+  vouchq-url:
+    description: "Base URL of your Vouchq instance, e.g. https://vouchq.example.com"
+    required: true
+  auth:
+    description: "HTTP Basic credentials for a least-privilege (VIEWER) CI user, as EMAIL:PASSWORD. Pass via a secret."
+    required: true
+  path:
+    description: "Directory to scan for Skills (SKILL.md folders)."
+    required: false
+    default: "."
+  advisory:
+    description: "If true, report findings but do not fail the job."
+    required: false
+    default: "false"
+runs:
+  using: "composite"
+  steps:
+    - name: Vouchq verify
+      shell: bash
+      env:
+        VOUCHQ_URL: ${{ inputs.vouchq-url }}
+        VOUCHQ_AUTH: ${{ inputs.auth }}
+        VOUCHQ_PATH: ${{ inputs.path }}
+        VOUCHQ_ADVISORY: ${{ inputs.advisory }}
+      run: |
+        set -euo pipefail
+        zip -qr /tmp/vouchq-verify.zip "$VOUCHQ_PATH" -x '*/.git/*' '*.git/*' >/dev/null
+        resp="$(curl -fsS -u "$VOUCHQ_AUTH" -F "file=@/tmp/vouchq-verify.zip" \
+          "${VOUCHQ_URL%/}/api/verify")"
+
+        pass="$(printf '%s' "$resp" | jq -r '.pass')"
+        total="$(printf '%s' "$resp" | jq -r '.total')"
+        approved="$(printf '%s' "$resp" | jq -r '.approved')"
+
+        echo "vouchq: $approved/$total skill(s) vouched (APPROVED + pinned)"
+        printf '%s' "$resp" | jq -r '.items[] | "  \(.verdict)\t\(.name)\t\(.definitionHash[0:12])"' | column -t -s$'\t'
+
+        if [ "$total" = "0" ]; then
+          echo "::warning::vouchq: no Skills found under '$VOUCHQ_PATH' — nothing to verify"
+          exit 0
+        fi
+        if [ "$pass" = "true" ]; then
+          echo "vouchq: all skills vouched ✓"
+          exit 0
+        fi
+
+        printf '%s' "$resp" | jq -r \
+          '.items[] | select(.verdict != "APPROVED") | "::error title=Vouchq \(.verdict)::\(.name) is \(.verdict) — not an approved+pinned version"'
+        if [ "$VOUCHQ_ADVISORY" = "true" ]; then
+          echo "::warning::vouchq verify failed but advisory=true — not failing the job"
+          exit 0
+        fi
+        echo "vouchq: build gate failed — unapproved or changed skills above" >&2
+        exit 1

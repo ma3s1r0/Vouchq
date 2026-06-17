@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * public {@code /api} surface. Keeps controllers free of try/catch noise and
  * never leaks stack traces or JPA internals to clients.
  */
-@RestControllerAdvice(basePackages = {"com.vouchq.api", "com.vouchq.install"})
+@RestControllerAdvice(basePackages = {"com.vouchq.api", "com.vouchq.install", "com.vouchq.verify"})
 public class ApiExceptionHandler {
 
     /** Unknown id / cross-org / bad input → 400. */

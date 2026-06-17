@@ -82,6 +82,11 @@ public class SecurityConfig {
                         // Read access: any authenticated role.
                         .requestMatchers(HttpMethod.GET, "/api/**")
                             .hasAnyRole("VIEWER", "MEMBER", "ADMIN")
+                        // CI verify (MA3-98): a read-only check (no writes) that a
+                        // least-privilege CI token should run — VIEWER+, declared
+                        // before the general POST rule so it wins.
+                        .requestMatchers(HttpMethod.POST, "/api/verify")
+                            .hasAnyRole("VIEWER", "MEMBER", "ADMIN")
                         // Mutating access: MEMBER or ADMIN (VIEWER forbidden).
                         .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("MEMBER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("MEMBER", "ADMIN")

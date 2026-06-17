@@ -61,6 +61,9 @@ Spring Security 기반 **Admin / Member / Viewer** 역할. 모든 데이터는 `
 ### 배포 / 설치
 개발자는 **vouched(승인된)** 기능만 가져옵니다 — 라이브 upstream이 아니라. 하나의 레포가 여러 Skill을 등록하므로 인벤토리는 소스별로 묶이고, 각 그룹마다 원클릭 **Install** 이 복붙용 `curl … | sh` 한 줄을 만들어 줍니다. 생성된 스크립트는 승인된 파일을 Vouchq에서(박제된 **바로 그 바이트**) 받아 SHA-256을 다시 검증한 뒤 `.claude/skills/` 에 기록합니다. `APPROVED` + 박제된 Skill만 제공되고 — pending / drifted / blocked 은 표시하고 건너뜁니다 — 모든 설치는 WORM 감사 로그에 `SKILL_INSTALL_SERVED` 로 남습니다. **원격** MCP 서버도 같은 방식으로 — 정상 상태(승인 도구 ≥1, blocked·drifted 없음; 거부 자체가 신호)인 서버에만 발급되는 vouched 연결 설정으로 — Claude(`.mcp.json`) · Cursor(`.cursor/mcp.json`) · Codex(`config.toml`)에 설치되고, `MCP_INSTALL_SERVED` 로 기록됩니다. 바이트가 새 `git clone` 이 아니라 Vouchq의 박제 스냅샷에서 나오므로, rug-pull된 upstream을 다시 끌어오는 일이 없습니다. Vouchq는 신뢰된 아티팩트를 발급할 뿐, 요청 경로에 인라인으로 끼어들지 않습니다.
 
+### CI 검증 / 빌드 게이트
+소비자 CI를 위한 read-only **빌드 게이트**: [`vouchq-verify` GitHub Action](integrations/github-action/) 이 체크아웃된 레포를 업로드하면, Vouchq가 Skill별로 **현재** 정의가 `APPROVED` + 박제된 버전인지 판정하고 `CHANGED` / `BLOCKED` / `UNKNOWN` 이 하나라도 있으면 잡(job)을 실패시킵니다. 배포와 짝을 이뤄 루프를 닫습니다 — vouched 기능은 **나가는** 길로, 미승인·은밀히 바뀐 것은 **들어오는** 길에서 차단. 정체성은 동일한 `definitionHash` 이고 권위 있는 파서가 서버에서 계산하므로 클라이언트 해시 불일치가 없습니다. Vouchq는 끝까지 레지스트리 — 게이트는 또 하나의 reader(`POST /api/verify`, VIEWER+)일 뿐, 에이전트 요청 경로엔 끼지 않습니다.
+
 ### 스코프 — first-party로 관측 가능한 것만
 Vouchq는 자신이 **직접(first-party)** 정의를 관측할 수 있는 기능만 거버넌스합니다: Skill의 바이트(레포에서 파싱)와 **원격** MCP 서버의 도구 표면(`tools/list` 로 직접 fetch). 스스로 볼 수 있는 것만 박제하고 검증합니다.
 

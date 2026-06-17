@@ -225,6 +225,26 @@ public final class ApiDtos {
                                   OffsetDateTime generatedAt, List<InstallSkill> skills,
                                   InstallExcluded excluded) {}
 
+    // ── CI verify (MA3-98) ──
+    // A read-only build gate: a consumer's CI uploads its checked-out repo and
+    // vouchq reports, per Skill, whether the current definition is an APPROVED +
+    // pinned version. vouchq stays a registry — this is a query, not a data path.
+
+    /**
+     * One Skill's verdict. {@code APPROVED} = its definition hash matches a pinned
+     * approved version; {@code CHANGED} = a Skill of this name is approved but the
+     * working-tree definition diverges (an unreviewed change / drift); {@code
+     * BLOCKED} = a Skill of this name is blocked; {@code UNKNOWN} = not registered.
+     */
+    public record VerifyItem(String name, String definitionHash, String verdict) {}
+
+    /**
+     * {@code POST /api/verify} result: {@code pass} is true only when every Skill
+     * is {@code APPROVED}. {@code approved} counts the passing ones out of {@code
+     * total}; {@code items} carries each verdict for the CI log.
+     */
+    public record VerifyResult(boolean pass, int total, int approved, List<VerifyItem> items) {}
+
     /** {@code POST /api/tools/{id}/approve} body. */
     public record ApproveRequest(String approvedBy) {}
 

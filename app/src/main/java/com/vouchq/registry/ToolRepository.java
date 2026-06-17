@@ -15,6 +15,9 @@ public interface ToolRepository extends JpaRepository<Tool, UUID> {
 
     Optional<Tool> findByIdAndOrgId(UUID id, UUID orgId);
 
+    /** All tools for an org — used by the CI verify name/status lookup (MA3-98). */
+    List<Tool> findByOrgId(UUID orgId);
+
     List<Tool> findByOrgIdAndServerIdIn(UUID orgId, List<UUID> serverIds);
 
     /**
