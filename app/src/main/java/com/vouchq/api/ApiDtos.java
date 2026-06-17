@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Request/response DTOs for the public REST API (MA3-80, 기획서 §8).
+ * Request/response DTOs for the public REST API (MA3-80).
  *
  * <p>JPA entities are never serialized directly — every endpoint maps to one of
  * these records so the wire shape is stable and lazy/internal fields never leak.

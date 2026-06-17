@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * An MCP server or a Skill bundle (기획서 §6). The upper concept that groups the
+ * An MCP server or a Skill bundle. The upper concept that groups the
  * individual {@link Tool}s discovered from a {@link Source}.
  */
 @Entity

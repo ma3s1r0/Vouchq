@@ -1,5 +1,5 @@
--- V7 — false-positive suppression / acknowledgement of scan findings (MA3-94,
--- 기획서 §13). A suppression silences a finding at READ time: the raw scan_result
+-- V7 — false-positive suppression / acknowledgement of scan findings (MA3-94).
+-- A suppression silences a finding at READ time: the raw scan_result
 -- rows are never mutated, so the underlying detection stays on the record. The
 -- API and the policy engine apply suppression to compute an EFFECTIVE risk over
 -- the non-suppressed findings only — so acknowledging a known FP can never blind

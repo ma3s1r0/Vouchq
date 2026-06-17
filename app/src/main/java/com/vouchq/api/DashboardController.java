@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Dashboard aggregate (기획서 §8/§9.1): total assets, counts by status, pending
+ * Dashboard aggregate: total assets, counts by status, pending
  * approval queue size, unresolved drift by severity, and recent activity.
  *
  * <p>RBAC (MA3-71): read-only (GET) — open to any authenticated role via

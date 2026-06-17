@@ -3,7 +3,7 @@ package com.vouchq.retention;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Data-retention / pruning policy (MA3-97, 기획서 §6 lifecycle).
+ * Data-retention / pruning policy (MA3-97 lifecycle).
  *
  * <p>The registry accumulates a {@code tool_version} row on every observed
  * definition change and a {@code scan_result} per scan; with scheduled re-scans
@@ -34,7 +34,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * </pre>
  *
  * <p>Disabled by default so a quiet self-hosted instance does no background work
- * and never deletes data unless the operator opts in (기획서 §7).
+ * and never deletes data unless the operator opts in.
  */
 @ConfigurationProperties(prefix = "vouchq.retention")
 public class RetentionProperties {

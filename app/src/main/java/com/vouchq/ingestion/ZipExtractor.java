@@ -9,7 +9,7 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Safely unpacks an uploaded zip into a fresh temp directory for the file-upload
- * ingestion fallback (MA3-76, 기획서 §5.1).
+ * ingestion fallback (MA3-76).
  *
  * <p>Defensive against hostile archives:
  * <ul>

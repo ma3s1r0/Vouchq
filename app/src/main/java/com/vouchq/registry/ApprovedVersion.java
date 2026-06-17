@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * The approved / pinned canonical version of a tool (기획서 §6, "박제"). When an
+ * The approved / pinned canonical version of a tool ("박제"). When an
  * engineer approves a {@link Tool}, the current {@link ToolVersion}'s id and
  * SHA-256 {@code hash} are captured here together with who approved it and when.
  *

@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.http.HttpStatus;
 
 /**
- * Spring Security + RBAC for the control plane (MA3-71/MA3-93, 기획서 §10).
+ * Spring Security + RBAC for the control plane (MA3-71/MA3-93).
  *
  * <p><b>Auth mechanism:</b> DB-backed users over {@code app_user}
  * ({@link DbUserDetailsService}, BCrypt). Two front doors share that one user
@@ -27,7 +27,7 @@ import org.springframework.http.HttpStatus;
  *       {@code JSESSIONID} cookie; {@code /logout}; {@code GET /api/auth/me}.</li>
  *   <li><b>HTTP Basic</b> for API/CI clients — stateless, per request.</li>
  * </ul>
- * SSO/SAML remains Phase 2 (기획서 §12).
+ * SSO/SAML is a planned addition (not yet implemented).
  *
  * <p><b>RBAC rule matrix</b> (roles are hierarchical: ADMIN ⊇ MEMBER ⊇ VIEWER):
  * <pre>

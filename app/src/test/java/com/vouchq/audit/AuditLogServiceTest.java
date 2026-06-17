@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Pure-logic test of the hash-chained audit log (MA3-79, 기획서 §10). Uses an
+ * Pure-logic test of the hash-chained audit log (MA3-79). Uses an
  * in-memory fake repository (no DB / Testcontainers) so it runs in the build
  * container. Covers the 완료 기준: build a multi-entry chain, verify it passes,
  * then tamper a record and assert {@code verifyChain} FAILS at the broken entry.

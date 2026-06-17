@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  * Parses Claude Code Skill folders into normalized {@link ParsedSkill} objects.
  * A Skill folder is any directory containing a {@code SKILL.md}.
  *
- * <p>The MCP tool parser (Phase 1) will produce the same {@link ParsedSkill}
+ * <p>The MCP tool parser will produce the same {@link ParsedSkill}
  * shape so the registry / scan / pin / drift pipeline is reused unchanged.
  */
 public final class SkillParser {

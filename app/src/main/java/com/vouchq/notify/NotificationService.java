@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * Fans a {@link DriftNotification} out to every <em>enabled</em> notification
- * channel for the event's org (기획서 §5.2 알림 채널: 이메일 / Slack / Webhook).
+ * channel for the event's org (알림 채널: 이메일 / Slack / Webhook).
  *
  * <p><b>DB-backed (MA3-92):</b> channels are now rows in {@code notification_channel}
  * editable at runtime via {@code /api/settings/notification-channels} — no redeploy.
@@ -18,7 +18,7 @@ import java.util.UUID;
  * {@link ChannelAdapterFactory}. Properties ({@code vouchq.notify.*}) only seed an
  * empty DB on first boot ({@link NotificationChannelSeeder}).
  *
- * <p><b>Default-off (기획서 §7):</b> with no enabled channel row for the org the
+ * <p><b>Default-off:</b> with no enabled channel row for the org the
  * loaded list is empty, so {@link #dispatch} short-circuits and <em>no outbound
  * network call is made</em> — the self-hosted default.
  *

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 /**
  * Persists a scanner outcome ({@code com.vouchq.scanner.ScanResult}) as a
- * {@code scan_result} row for a {@link ToolVersion} (MA3-86, 기획서 §5.1 "위험 스캔").
+ * {@code scan_result} row for a {@link ToolVersion} (MA3-86 "위험 스캔").
  *
  * <p>Shared by the Git and MCP ingestion paths so both write risk the same way.
  * The scanner's findings list is serialized to the jsonb {@code findings} column;

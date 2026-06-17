@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * An individual tool/skill (기획서 §6). Tracks the latest observed version
+ * An individual tool/skill. Tracks the latest observed version
  * ({@code current_version_id}) and, once approved, the pinned canonical version.
  */
 @Entity

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Drift event listing &amp; resolution (기획서 §8).
+ * Drift event listing &amp; resolution.
  *
  * <p>RBAC (MA3-71) is enforced centrally in {@code com.vouchq.security.SecurityConfig}:
  * GET is open to any authenticated role; resolve (POST) requires MEMBER or ADMIN

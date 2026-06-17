@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Source connection &amp; (re)scan endpoints (기획서 §8).
+ * Source connection &amp; (re)scan endpoints.
  *
  * <p>RBAC (MA3-71) is enforced centrally in {@code com.vouchq.security.SecurityConfig}:
  * GET is open to any authenticated role; connect/scan (POST) require MEMBER or ADMIN
@@ -77,7 +77,7 @@ public class SourcesController {
     }
 
     /**
-     * Upload a zip bundle of Skill folders and ingest it (MA3-76, 기획서 §5.1
+     * Upload a zip bundle of Skill folders and ingest it (MA3-76, the zip
      * fallback). The zip is unpacked into a fresh temp dir — guarded against
      * zip-slip and size/entry bombs ({@link ZipExtractor}) — then ingested via
      * the same parse → scan → policy pipeline as the Git path, recording the

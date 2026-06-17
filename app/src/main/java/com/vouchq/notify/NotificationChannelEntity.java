@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * A DB-backed, editable outbound notification channel (MA3-92, 기획서 §5.2 알림 채널).
+ * A DB-backed, editable outbound notification channel (MA3-92 알림 채널).
  * Replaces the static {@code @ConfigurationProperties}-driven channel beans
  * (MA3-85) as the source of truth: channels can now be created/updated/deleted at
  * runtime via {@code /api/settings/notification-channels} with no redeploy.
@@ -23,7 +23,7 @@ import java.util.UUID;
  * <p>{@code target} is the primary address (webhook/Slack URL, or the email
  * {@code from} address); {@code config} is a small jsonb bag of type-specific
  * extras (e.g. EMAIL {@code {"to":["ops@x"]}}). A row is only ever contacted when
- * {@code enabled=true}, preserving the self-hosted default-off rule (기획서 §7):
+ * {@code enabled=true}, preserving the self-hosted default-off rule:
  * with no enabled rows {@link NotificationService} makes zero outbound calls.
  */
 @Entity

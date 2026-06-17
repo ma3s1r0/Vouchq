@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 /**
  * MA3-85/MA3-92 default-off proof + DB-channel fan-out for {@link NotificationService}.
  *
- * <p>The critical self-hosted assertion (기획서 §7): with no <em>enabled</em> channel
+ * <p>The critical self-hosted assertion: with no <em>enabled</em> channel
  * row for the org (the default) dispatch makes <em>zero</em> outbound calls — here
  * proven by never invoking the adapter factory.
  */

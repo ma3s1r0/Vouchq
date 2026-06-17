@@ -28,7 +28,7 @@ import java.util.UUID;
  * of the box. Thereafter the DB is the editable source of truth and properties are
  * ignored (an empty table is only refilled if it was actually emptied).
  *
- * <p>Default-off (기획서 §7) is preserved: notify properties default to disabled,
+ * <p>Default-off is preserved: notify properties default to disabled,
  * so nothing is seeded and no channel exists ⇒ zero outbound.
  */
 @Component

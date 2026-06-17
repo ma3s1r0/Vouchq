@@ -13,7 +13,7 @@ import java.time.Duration;
 
 /**
  * Generic webhook channel: POSTs a JSON drift payload to a configured URL using
- * the JDK {@link HttpClient} (no extra dependency — 기획서 §7 표준 의존성).
+ * the JDK {@link HttpClient} (no extra dependency).
  *
  * <p>A plain stateless adapter (MA3-92): built per-send from a DB channel row by
  * {@link ChannelAdapterFactory}, not a Spring bean. With no enabled channel row

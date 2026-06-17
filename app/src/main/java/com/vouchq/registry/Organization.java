@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * Multitenancy root (기획서 §6). Every domain row is scoped to an organization
+ * Multitenancy root. Every domain row is scoped to an organization
  * via {@code org_id}.
  */
 @Entity

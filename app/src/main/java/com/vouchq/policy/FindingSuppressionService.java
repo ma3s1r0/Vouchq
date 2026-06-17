@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Applies false-positive suppressions to scan findings at read time (MA3-94,
- * 기획서 §13).
+ * Applies false-positive suppressions to scan findings at read time (MA3-94).
  *
  * <p><b>Fingerprint.</b> A finding's stable identity is
  * {@code fingerprint(f) = sha256hex( f.ruleId + "|" + f.path + "|" + f.line )}.

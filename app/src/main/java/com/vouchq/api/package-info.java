@@ -1,5 +1,5 @@
 /**
- * <b>api</b> — public REST surface (MA3-80, 기획서 §8): sources, servers, tools,
+ * <b>api</b> — public REST surface (MA3-80): sources, servers, tools,
  * approve/block, drift events, audit logs, dashboard. Controllers map domain
  * entities to request/response DTOs ({@link com.vouchq.api.ApiDtos}); JPA
  * entities are never serialized directly.

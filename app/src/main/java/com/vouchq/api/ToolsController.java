@@ -32,7 +32,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Tool/Skill inventory, detail, and approve/block lifecycle (기획서 §8).
+ * Tool/Skill inventory, detail, and approve/block lifecycle.
  *
  * <p>RBAC (MA3-71) is enforced centrally in {@code com.vouchq.security.SecurityConfig}:
  * GET is open to any authenticated role; approve/block (POST) require MEMBER or ADMIN

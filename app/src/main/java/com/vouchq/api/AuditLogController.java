@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Audit log query endpoint (기획서 §8, §10 hash-chained log). The write side is
+ * Audit log query endpoint (hash-chained log). The write side is
  * MA3-79; until it lands the table is empty and this endpoint returns {@code []}.
  *
  * <p>RBAC (MA3-71): read-only (GET) — open to any authenticated role via
@@ -91,7 +91,7 @@ public class AuditLogController {
         }
     }
 
-    /** Verify the org's hash chain end-to-end (기획서 §10 audit integrity). */
+    /** Verify the org's hash chain end-to-end (audit integrity). */
     @GetMapping("/verify")
     public AuditLogService.VerifyResult verify() {
         UUID orgId = currentOrg.require();
@@ -101,7 +101,7 @@ public class AuditLogController {
     /**
      * Tamper-evident integrity export of the org's <em>complete</em> chain in
      * ascending id order (not capped), each row with {@code prev_hash}/{@code
-     * entry_hash}, plus an overall chain-verification result (MA3-91, 기획서 §9.6).
+     * entry_hash}, plus an overall chain-verification result (MA3-91).
      *
      * <p>{@code format=json} (default) returns {@code {verification, entries}};
      * {@code format=csv} returns a header row with the verification result as

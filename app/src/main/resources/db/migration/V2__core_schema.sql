@@ -1,4 +1,4 @@
--- V2 core schema (기획서 §6). Multitenant via org_id on every domain table.
+-- V2 core schema. Multitenant via org_id on every domain table.
 -- PostgreSQL 16. Enums modeled as varchar + CHECK for Flyway simplicity.
 -- uuid PKs default gen_random_uuid() (pgcrypto built into PG16).
 

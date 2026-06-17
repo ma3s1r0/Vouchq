@@ -14,7 +14,7 @@ import java.util.Base64;
 /**
  * Default {@link CredentialCipher}: AES-GCM (authenticated encryption) over the
  * JDK's standard crypto provider — no third-party dependency, so it runs anywhere
- * a self-hosted instance does (기획서 §7).
+ * a self-hosted instance does.
  *
  * <h2>Format</h2>
  * Ciphertext strings are {@code "enc:gcm:" + base64(iv ‖ ciphertext+tag)}. The

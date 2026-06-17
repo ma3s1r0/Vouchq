@@ -16,7 +16,7 @@ import java.util.UUID;
 
 /**
  * A detected mismatch between a tool's pinned (박제) definition and its currently
- * observed definition (기획서 §6, "rug-pull" detection). Created by
+ * observed definition ("rug-pull" detection). Created by
  * {@link DriftDetectionService} when a re-scan finds the current
  * {@link ToolVersion} hash differs from the {@link ApprovedVersion} hash.
  *

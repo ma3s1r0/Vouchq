@@ -16,11 +16,11 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Scheduled re-scan job (MA3-85, 기획서 §5.2 "스케줄 재스캔"). Periodically, for every
+ * Scheduled re-scan job (MA3-85 "스케줄 재스캔"). Periodically, for every
  * organization, re-ingests each re-fetchable source — {@code GIT_REPOSITORY}
  * (re-clone) and {@code MCP_SERVER} (re-call {@code tools/list}, MA3-90) — and
  * drift-scans its pinned tools, delegating entirely to {@link RescanService} (no
- * duplicated logic). MCP coverage is what gives rug-pull detection (기획서 §2.2) its
+ * duplicated logic). MCP coverage is what gives rug-pull detection its
  * teeth: an MCP server can mutate a tool definition after approval, and only a
  * scheduled re-fetch catches it.
  *
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * the next run is scheduled only after the previous one finishes, so a long scan
  * can never stack up on itself.
  *
- * <h2>Enablement (기획서 §7)</h2>
+ * <h2>Enablement</h2>
  * The bean exists only when {@code vouchq.rescan.enabled=true}. The default
  * ({@code false}) keeps a quiet self-hosted instance from doing background work —
  * and, combined with the default-off notify channels, guarantees zero outbound

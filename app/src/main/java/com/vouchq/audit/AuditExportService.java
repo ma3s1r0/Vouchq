@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Tamper-evident integrity export of an org's full audit chain (MA3-91,
- * 기획서 §9.6 export / §10 audit integrity).
+ * Tamper-evident integrity export of an org's full audit chain (MA3-91).
  *
  * <p>Unlike the capped UI list ({@code GET /api/audit-logs}), the export returns
  * the <em>complete</em> log in ascending id (chain) order, including each row's

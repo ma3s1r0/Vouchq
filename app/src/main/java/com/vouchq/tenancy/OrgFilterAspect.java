@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * Central enforcement of tenant isolation (MA3-70, 기획서 §10). Wraps every Spring
+ * Central enforcement of tenant isolation (MA3-70). Wraps every Spring
  * Data repository call and, when an org is bound to the current unit of work
  * ({@link CurrentOrgContext}), enables Hibernate's {@code orgFilter} on the
  * current {@link Session} with that org's id.

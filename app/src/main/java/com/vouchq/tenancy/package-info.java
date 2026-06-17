@@ -1,5 +1,5 @@
 /**
- * <b>tenancy</b> — query-level multitenancy (MA3-70, 기획서 §10). Every
+ * <b>tenancy</b> — query-level multitenancy (MA3-70). Every
  * org-scoped entity carries Hibernate's {@code orgFilter}; {@link
  * com.vouchq.tenancy.OrgFilterAspect} enables it with the request's org
  * ({@link com.vouchq.tenancy.CurrentOrgContext}) on every persistence call, so a

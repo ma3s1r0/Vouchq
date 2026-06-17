@@ -11,8 +11,8 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * A false-positive suppression / acknowledgement of scan findings (MA3-94,
- * 기획서 §13). It silences a finding at <em>read</em> time only — the raw
+ * A false-positive suppression / acknowledgement of scan findings (MA3-94).
+ * It silences a finding at <em>read</em> time only — the raw
  * {@code scan_result} is never mutated — so the API and {@link PolicyEngine}
  * compute an <em>effective</em> risk over the non-suppressed findings while the
  * underlying detection stays on the record.

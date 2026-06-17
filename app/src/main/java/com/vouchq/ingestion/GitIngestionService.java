@@ -125,8 +125,8 @@ public class GitIngestionService {
 
     /**
      * Ingest from a local path while recording the source under an explicit
-     * {@link Source.Type} (e.g. {@code FILE_UPLOAD} for the zip-upload fallback,
-     * 기획서 §5.1). No credentials involved.
+     * {@link Source.Type} (e.g. {@code FILE_UPLOAD} for the zip-upload fallback).
+     * No credentials involved.
      */
     @Transactional
     public IngestionResult ingestLocalPath(UUID orgId, String sourceUri, Path repoRoot, Source.Type type) {
@@ -139,7 +139,7 @@ public class GitIngestionService {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown org: " + orgId));
 
         boolean authenticated = token != null && !token.isBlank();
-        // Encrypt the token at rest; auth_ref holds ciphertext, never the raw token (기획서 §10).
+        // Encrypt the token at rest; auth_ref holds ciphertext, never the raw token.
         String authRef = credentialCipher.encrypt(token);
         Source existing = sources.findByOrgIdAndUri(org.getId(), sourceUri).orElse(null);
         boolean newSource = existing == null;
@@ -156,7 +156,7 @@ public class GitIngestionService {
             }
         }
 
-        // Audit: a brand-new source connection (기획서 §6 SOURCE_CONNECTED).
+        // Audit: a brand-new source connection (SOURCE_CONNECTED).
         if (newSource) {
             ObjectNode payload = objectMapper.createObjectNode();
             payload.put("uri", sourceUri);
@@ -215,7 +215,7 @@ public class GitIngestionService {
             policyEngine.evaluate(org.getId(), tool, scan);
         }
 
-        // Audit: every ingest run is a scan over the source (기획서 §6 SCAN_RUN).
+        // Audit: every ingest run is a scan over the source (SCAN_RUN).
         ObjectNode scanPayload = objectMapper.createObjectNode();
         scanPayload.put("uri", sourceUri);
         scanPayload.put("skillsParsed", parsed.size());

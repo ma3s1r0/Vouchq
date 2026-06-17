@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * CRUD + test for DB-backed notification channels (MA3-92, 기획서 §5.2 / §9.7).
+ * CRUD + test for DB-backed notification channels (MA3-92).
  *
  * <p>RBAC: reads (GET) open to VIEWER+; mutations (POST/PUT/PATCH/DELETE under
  * {@code /api/settings/**}) require ADMIN — enforced centrally in

@@ -31,7 +31,7 @@ import java.util.UUID;
 /**
  * MCP ingestion path (MA3-84): connect an MCP server endpoint, call
  * {@code tools/list}, and persist its tools as inventory — the second축 of the
- * 기획서 §5 vision, joined by swapping only the collection layer.
+ * vision, joined by swapping only the collection layer.
  *
  * <p>It deliberately mirrors {@link GitIngestionService}: each MCP server becomes
  * one {@link RegisteredServer} (MCP_SERVER); each {@code tools/list} entry becomes
@@ -128,7 +128,7 @@ public class McpIngestionService {
         Organization org = organizations.findById(orgId)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown org: " + orgId));
 
-        // auth_ref holds ciphertext (or null), never the raw token (기획서 §10).
+        // auth_ref holds ciphertext (or null), never the raw token.
         String authRef = authRefCiphertext;
         Source existing = sources.findByOrgIdAndUri(org.getId(), serverUrl).orElse(null);
         boolean newSource = existing == null;

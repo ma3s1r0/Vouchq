@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * <p>{@code @EnableScheduling} powers the periodic re-scan job (MA3-85). Notify
  * channel properties are bound here; the channel beans themselves are
- * {@code @ConditionalOnProperty} and stay OFF unless explicitly enabled (기획서 §7).
+ * {@code @ConditionalOnProperty} and stay OFF unless explicitly enabled.
  */
 @SpringBootApplication
 @EnableScheduling

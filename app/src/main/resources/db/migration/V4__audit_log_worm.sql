@@ -25,7 +25,7 @@
 -- What this does NOT defend against: a superuser who can ALTER/DROP the trigger
 -- or TRUNCATE the table (TRUNCATE does not fire row-level triggers). Defending
 -- those requires OS-level controls / least-privilege DB roles / off-box export,
--- which are deployment concerns (기획서 §10). The integrity export gives an
+-- which are deployment concerns. The integrity export gives an
 -- auditor tamper-evident evidence to compare against an out-of-band copy.
 --
 -- Mechanism: a BEFORE UPDATE OR DELETE row-level trigger that RAISE EXCEPTION.

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 /**
  * A self-contained, channel-agnostic description of a newly detected drift event
- * (기획서 §5.2 알림 채널). Built by the registry/ingestion layer and handed to
+ * (알림 채널). Built by the registry/ingestion layer and handed to
  * {@link NotificationService}; adapters render it into their own wire format.
  *
  * <p>Deliberately a flat record of already-resolved values (no entities) so the

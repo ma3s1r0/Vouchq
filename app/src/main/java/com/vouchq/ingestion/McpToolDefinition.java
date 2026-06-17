@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
  * A normalized MCP tool definition — one entry from an MCP server's
  * {@code tools/list} result: {@code {name, description, inputSchema}}.
  *
- * <p>This is the MCP analogue of {@code ParsedSkill} (기획서 §5): the collection
+ * <p>This is the MCP analogue of {@code ParsedSkill}: the collection
  * layer differs (JSON-RPC over HTTP instead of a Git clone + Skill parse) but the
  * output is a normalized definition + a stable {@code definitionHash}, so the
  * registry / scan / pin (박제) / drift pipeline downstream is reused unchanged.

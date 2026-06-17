@@ -28,7 +28,7 @@ public class InternalMcpIngestController {
 
     /**
      * Request body: {@code {"url": "https://...", "token": "..."}}. The token is
-     * optional, kept in memory only, and never persisted or logged (기획서 §10).
+     * optional, kept in memory only, and never persisted or logged.
      */
     public record McpIngestRequest(String url, String token) {}
 

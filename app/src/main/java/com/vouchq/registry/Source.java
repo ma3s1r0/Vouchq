@@ -11,10 +11,10 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * A connected source: a Git repository, an uploaded bundle, or (P1.5) an MCP
+ * A connected source: a Git repository, an uploaded bundle, or an MCP
  * server endpoint. {@code authRef} holds the source credential <em>encrypted at
  * rest</em> ({@code com.vouchq.credentials.CredentialCipher} ciphertext) — never the
- * raw token (기획서 §10: secrets encrypted at rest).
+ * raw token (secrets encrypted at rest).
  */
 @Entity
 @Table(name = "source")

@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  *
  * <p>The optional token is held only in memory for the duration of the clone
  * (passed to {@link UsernamePasswordCredentialsProvider}); it is never logged or
- * persisted (기획서 §10).
+ * persisted.
  */
 @Component
 public class GitFetcher {

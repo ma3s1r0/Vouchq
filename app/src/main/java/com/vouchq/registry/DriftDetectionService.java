@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Manual re-scan &amp; drift detection (MA3-78, 기획서 §5.1 "수동 재스캔 &amp; Drift 탐지").
+ * Manual re-scan &amp; drift detection (MA3-78 "수동 재스캔 &amp; Drift 탐지").
  *
  * <p>A scan is only meaningful for a tool that has been pinned (박제) — i.e. has an
  * {@link ApprovedVersion}. It compares the tool's <strong>current</strong>
@@ -285,7 +285,7 @@ public class DriftDetectionService {
     private Tool requireTool(UUID orgId, UUID toolId) {
         Tool tool = tools.findById(toolId)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown tool: " + toolId));
-        // Tenant isolation (기획서 §10): never act across orgs.
+        // Tenant isolation: never act across orgs.
         if (!tool.getOrgId().equals(orgId)) {
             throw new IllegalArgumentException("Tool " + toolId + " not in org " + orgId);
         }

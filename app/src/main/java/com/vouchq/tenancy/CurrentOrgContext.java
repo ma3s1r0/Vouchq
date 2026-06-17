@@ -4,8 +4,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Holds the organization that the current unit of work is scoped to (MA3-70,
- * 기획서 §10 멀티테넌시). The value is set once per request (or per test/bootstrap
+ * Holds the organization that the current unit of work is scoped to (MA3-70).
+ * The value is set once per request (or per test/bootstrap
  * unit of work) and read by {@link OrgFilterAspect} to enable Hibernate's
  * {@code orgFilter} on every session, so a forgotten {@code org_id} predicate in
  * a repository finder cannot leak another tenant's rows.

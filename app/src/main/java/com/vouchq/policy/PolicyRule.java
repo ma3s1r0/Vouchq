@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * A DB-backed, editable policy rule (MA3-92, 기획서 §5.2 정책 룰). Replaces the
+ * A DB-backed, editable policy rule (MA3-92 정책 룰). Replaces the
  * static {@code @ConfigurationProperties} rules (MA3-86) as the source of truth:
  * rules can now be created/updated/deleted at runtime via
  * {@code /api/settings/policy-rules} with no redeploy.

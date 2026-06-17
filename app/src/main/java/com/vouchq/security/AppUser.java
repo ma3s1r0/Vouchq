@@ -11,8 +11,8 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * A user account (기획서 §6 app_user, §10 인증/인가). Each user belongs to exactly
- * one organization ({@code orgId}) for the MVP — multi-org/SSO is Phase 2 (§12).
+ * A user account (app_user). Each user belongs to exactly
+ * one organization ({@code orgId}) for the MVP — multi-org/SSO is a later addition.
  *
  * <p><b>Not</b> org-filtered: authentication looks the user up by globally-unique
  * email <em>before</em> any org is bound, so the Hibernate {@code orgFilter} must

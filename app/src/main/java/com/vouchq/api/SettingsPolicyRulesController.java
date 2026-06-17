@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * CRUD for DB-backed policy rules (MA3-92, 기획서 §5.2 / §9.7). Rules are evaluated
+ * CRUD for DB-backed policy rules (MA3-92). Rules are evaluated
  * by {@link com.vouchq.policy.PolicyEngine} in ascending {@code priority} order;
  * the first matching enabled rule wins.
  *

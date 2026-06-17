@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * The policy rule engine (MA3-86 / MA3-92, 기획서 §5.2 "정책 룰"). After a tool is
+ * The policy rule engine (MA3-86 / MA3-92 "정책 룰"). After a tool is
  * ingested and scanned, it evaluates the org's <em>DB-backed</em> {@link PolicyRule}
  * rows against the scan outcome and the tool, applies the first matching enabled
  * rule's action, and appends a {@code POLICY_APPLIED} audit entry.

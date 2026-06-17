@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * The risk-scan outcome for one {@link ToolVersion} (기획서 §6). Produced by the
+ * The risk-scan outcome for one {@link ToolVersion}. Produced by the
  * OSS {@code com.vouchq.scanner.SkillScanner} when a new version is ingested and
  * persisted to the {@code scan_result} table: an aggregate {@code risk_score}
  * (0–100), the {@code highest_severity} seen (null when clean), and the raw

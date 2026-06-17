@@ -1,7 +1,7 @@
--- V6 — real auth over app_user (MA3-93, 기획서 §10 인증/인가).
+-- V6 — real auth over app_user (MA3-93 인증/인가).
 -- Adds the credential + lifecycle columns the V2 app_user table was missing so
 -- it can back a DB UserDetailsService (BCrypt) and org membership. One org per
--- user (app_user.org_id from V2) for the MVP; multi-org/SSO is Phase 2.
+-- user (app_user.org_id from V2) for the MVP; multi-org/SSO is a later addition.
 
 ALTER TABLE app_user
     ADD COLUMN password_hash varchar(100),

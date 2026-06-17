@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Manage false-positive suppressions / acknowledgements (MA3-94, 기획서 §13).
+ * Manage false-positive suppressions / acknowledgements (MA3-94).
  *
  * <p>A suppression silences a finding at read time (the raw scan is preserved):
  * the API and {@link com.vouchq.policy.PolicyEngine} compute an effective risk

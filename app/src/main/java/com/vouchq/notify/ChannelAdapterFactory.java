@@ -23,7 +23,7 @@ import java.util.List;
  * adapter from the row's {@code target} + jsonb {@code config}, reusing the
  * existing Webhook/Slack/Email adapters (MA3-85) so the wire format is unchanged.
  *
- * <p>The JDK {@link HttpClient} (no extra dependency, 기획서 §7) is shared across
+ * <p>The JDK {@link HttpClient} (no extra dependency) is shared across
  * webhook/Slack adapters. Email needs a Spring {@link MailSender}; if none is
  * configured ({@code spring.mail.*} absent) an EMAIL channel cannot be built and
  * {@link #build} throws — surfaced as a clear error rather than a silent no-op.

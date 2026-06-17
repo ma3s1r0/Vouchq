@@ -14,7 +14,7 @@ import java.util.UUID;
 
 /**
  * A point-in-time snapshot of a tool's definition plus its SHA-256 hash
- * (기획서 §6). {@code definition} is the serialized {@code ParsedSkill}; the
+ *. {@code definition} is the serialized {@code ParsedSkill}; the
  * {@code hash} is the parser's stable {@code definitionHash}. New observations
  * with a changed hash become new rows — the foundation for drift detection.
  */

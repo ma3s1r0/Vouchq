@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * A {@link Rule} backed by a regular expression. When {@code maskMatch} is set,
  * the matched substring is masked in the evidence so secrets are never echoed
- * back in full (기획서 §10).
+ * back in full.
  */
 public final class RegexRule implements Rule {
 

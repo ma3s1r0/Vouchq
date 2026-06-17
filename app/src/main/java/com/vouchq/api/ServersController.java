@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Server / Skill-bundle inventory (기획서 §8).
+ * Server / Skill-bundle inventory.
  *
  * <p>RBAC (MA3-71): read-only (GET) — open to any authenticated role via
  * {@code com.vouchq.security.SecurityConfig}. Org context from

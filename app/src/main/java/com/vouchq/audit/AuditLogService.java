@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Append-only, hash-chained audit log writer + verifier (MA3-79, 기획서 §6 / §10).
+ * Append-only, hash-chained audit log writer + verifier (MA3-79).
  *
  * <p><strong>Append-only contract:</strong> this service exposes only
  * {@code append}, {@code verifyChain}, and read helpers — it never updates or
@@ -88,7 +88,7 @@ public class AuditLogService {
      *
      * @param orgId    tenant
      * @param actor    user or system identity performing the action
-     * @param action   action code (e.g. {@code SOURCE_CONNECTED}, 기획서 §6)
+     * @param action   action code (e.g. {@code SOURCE_CONNECTED})
      * @param targetId optional subject of the action (tool/source id), may be null
      * @param payload  canonical JSON string with action context, must be non-null
      */

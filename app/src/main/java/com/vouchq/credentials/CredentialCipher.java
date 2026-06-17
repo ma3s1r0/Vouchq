@@ -1,12 +1,12 @@
 package com.vouchq.credentials;
 
 /**
- * Symmetric encryption boundary for source credentials at rest (기획서 §10: source
+ * Symmetric encryption boundary for source credentials at rest (source
  * tokens encrypted, never stored or logged in the clear).
  *
  * <p>Deliberately an interface so the default in-process {@link AesGcmCredentialCipher}
  * can be swapped for a KMS/Vault-backed adapter without touching callers — honouring
- * the self-hosted constraint (기획서 §7) that cloud-specific services (a managed secret
+ * the self-hosted constraint that cloud-specific services (a managed secret
  * manager) sit behind a replaceable adapter while the standard build stays dependency-free.
  *
  * <p>Contract:

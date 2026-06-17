@@ -72,7 +72,7 @@ public class RescanService {
      * Re-ingest {@code source} (re-fetch + upsert) then drift-scan each pinned tool,
      * notifying on new drift. Supports both {@code GIT_REPOSITORY} (re-clone) and
      * {@code MCP_SERVER} (re-call {@code tools/list}) — the path that actually
-     * matters for rug-pull detection (기획서 §2.2). The stored credential, if any, is
+     * matters for rug-pull detection. The stored credential, if any, is
      * decrypted transiently and reused so private/authenticated sources keep
      * verifying (MA3-89/90). The org must be bound on the current thread.
      */

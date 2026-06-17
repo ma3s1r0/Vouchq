@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * Append-only, hash-chained audit log entry (기획서 §6 / §10). Rows are written
+ * Append-only, hash-chained audit log entry. Rows are written
  * by {@link AuditLogService} (MA3-79) and never updated or deleted — the chain
  * is what makes the log tamper-evident. This entity is the read view backing
  * {@code GET /api/audit-logs} plus the constructor/getters the writer needs.

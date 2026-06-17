@@ -1,8 +1,8 @@
--- V5 — DB-backed, editable notification channels and policy rules (MA3-92,
--- 기획서 §5.2 알림 채널 + 정책 룰, §9.7). Both org-scoped like every other domain
+-- V5 — DB-backed, editable notification channels and policy rules (MA3-92).
+-- Both org-scoped like every other domain
 -- table. Until now these lived in @ConfigurationProperties (MA3-85/86); from here
 -- the DB is the editable source of truth (properties only seed an empty DB on
--- first run). Self-hosted default (기획서 §7): no enabled channel ⇒ zero outbound.
+-- first run). Self-hosted default: no enabled channel ⇒ zero outbound.
 
 -- ---------------------------------------------------------------------------
 -- notification_channel — one outbound delivery target (Email / Slack / Webhook)

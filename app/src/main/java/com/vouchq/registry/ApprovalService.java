@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * The trust core (MA3-77, 기획서 §5.1 "승인 &amp; 해시 박제"). Approving a tool
+ * The trust core (MA3-77 "승인 &amp; 해시 박제"). Approving a tool
  * freezes its current definition as the authoritative pinned version.
  *
  * <p>Approve takes the tool's {@code current_version_id} {@link ToolVersion},
@@ -109,7 +109,7 @@ public class ApprovalService {
     private Tool requireTool(UUID orgId, UUID toolId) {
         Tool tool = tools.findById(toolId)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown tool: " + toolId));
-        // Tenant isolation (기획서 §10): never act across orgs.
+        // Tenant isolation: never act across orgs.
         if (!tool.getOrgId().equals(orgId)) {
             throw new IllegalArgumentException("Tool " + toolId + " not in org " + orgId);
         }

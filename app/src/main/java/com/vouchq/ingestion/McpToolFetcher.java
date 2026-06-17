@@ -17,15 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Connects to an MCP server endpoint and calls {@code tools/list} (기획서 §5,
- * Phase 1). MCP is JSON-RPC 2.0 over Streamable HTTP, so this POSTs a single
+ * Connects to an MCP server endpoint and calls {@code tools/list}. MCP is JSON-RPC 2.0 over Streamable HTTP, so this POSTs a single
  * {@code {"jsonrpc":"2.0","id":1,"method":"tools/list"}} request and parses the
  * {@code result.tools[]} array into normalized {@link McpToolDefinition}s.
  *
  * <p>Uses the JDK's {@link HttpClient} and Jackson only (no new dependency, no
  * framework coupling on the wire). An optional bearer token is kept in memory and
  * sent as an {@code Authorization} header; it is never persisted or logged
- * (기획서 §10).
+ *.
  */
 @Component
 public class McpToolFetcher {

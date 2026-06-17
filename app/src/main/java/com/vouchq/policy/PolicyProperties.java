@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 
 /**
- * Config-driven policy rules (MA3-86, 기획서 §5.2 "정책 룰").
+ * Config-driven policy rules (MA3-86 "정책 룰").
  *
  * <p>Bound from {@code vouchq.policy.*}. A rule is a set of conditions (ANDed
  * together; null/blank conditions are ignored) plus an action to apply when they
