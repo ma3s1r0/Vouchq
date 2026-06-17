@@ -2,7 +2,7 @@
 // Java plugin. Keeps per-module build files focused on dependencies.
 subprojects {
     group = "com.vouchq"
-    version = "0.1.0"
+    version = "0.2.0"
 
     repositories {
         mavenCentral()
