@@ -47,7 +47,7 @@ Git 저장소와 (Phase 1) MCP 서버를 연결하면, Vouchq의 OSS 파서가 S
 리뷰어가 정의를 승인하면 Vouchq가 그 정의를 불변 **SHA-256 기준선**(*정본*)으로 스냅샷합니다. 이 박제 버전이 이후 모든 비교의 고정 기준점이자, 그대로 하류에 배포되는 아티팩트입니다.
 
 ### 드리프트 / rug-pull 탐지
-스케줄(또는 수동) 재스캔이 현재 정의를 다시 가져와 해시를 박제 기준선과 비교합니다. 다르면 심각도(`INFO`/`WARN`/`CRITICAL`)와 필드 단위 diff를 담은 **DriftEvent**가 발생하고 해당 도구를 "검토 필요"로 돌립니다. 진행 중인 rug-pull의 경보죠.
+스케줄(또는 수동) 재스캔이 현재 정의를 다시 가져와 해시를 박제 기준선과 비교합니다. 다르면 심각도(`INFO`/`WARN`/`CRITICAL`)와 필드 단위 diff를 담은 **DriftEvent**가 발생하고 해당 도구를 "검토 필요"로 돌립니다. 진행 중인 rug-pull의 경보입니다.
 
 ### 정책 엔진
 스캔·드리프트 결과에 따라 선언적 룰이 움직입니다. 예컨대 위험 임계치를 넘거나 critical 드리프트가 나면 자동으로 **차단**하거나 **보류**해, 고위험 변경을 사람 손을 기다리지 않고 막습니다.
@@ -59,13 +59,13 @@ Git 저장소와 (Phase 1) MCP 서버를 연결하면, Vouchq의 OSS 파서가 S
 Spring Security 기반 **Admin / Member / Viewer** 역할. 모든 데이터는 `org_id`로 격리되고 쿼리 레벨에서 강제되어, 여러 팀·테넌트가 경계를 넘는 누출 없이 하나의 배포를 공유합니다.
 
 ### 배포 / 설치
-개발자는 **승인된(vouched)** 기능만 받습니다. 라이브 업스트림이 아니고요. 하나의 레포가 여러 Skill을 등록하니 인벤토리는 소스별로 묶이고, 그룹마다 원클릭 **Install** 이 복붙용 `curl … | sh` 한 줄을 만들어 줍니다. 생성된 스크립트는 승인된 파일을 Vouchq에서(박제된 **바로 그 바이트**) 받아 SHA-256을 다시 검증한 뒤 에이전트의 스킬 디렉터리 — **Claude**(`.claude/skills/`) 또는 **Cursor**(`.cursor/rules/<name>.mdc`, verify-then-adapt), 프로젝트/사용자 범위 — 에 기록합니다. `APPROVED`+박제된 Skill만 내려가고, pending·drifted·blocked은 표시만 하고 건너뜁니다. 모든 설치는 WORM 감사 로그에 `SKILL_INSTALL_SERVED`로 남습니다. **원격** MCP 서버도 마찬가지인데, 정상 상태(승인 도구 ≥1, blocked·drifted 없음; 거부 자체가 신호)인 서버에만 보증된 연결 설정을 발급해 Claude(`.mcp.json`)·Cursor(`.cursor/mcp.json`)·Codex(`config.toml`)에 설치하고 `MCP_INSTALL_SERVED`로 기록합니다. 바이트가 새 `git clone`이 아니라 Vouchq의 박제 스냅샷에서 나오므로, rug-pull된 업스트림을 다시 끌어오는 일이 없습니다. Vouchq는 신뢰된 아티팩트를 발급할 뿐, 요청 경로에 끼어들지 않습니다.
+개발자는 라이브 업스트림이 아니라 **승인된(vouched)** 기능만 받습니다. 하나의 레포가 여러 Skill을 등록하니 인벤토리는 소스별로 묶이고, 그룹마다 원클릭 **Install** 이 복붙용 `curl … | sh` 한 줄을 만들어 줍니다. 생성된 스크립트는 승인된 파일을 Vouchq에서(박제된 **바로 그 바이트**) 받아 SHA-256을 다시 검증한 뒤 에이전트의 스킬 디렉터리 — **Claude**(`.claude/skills/`) 또는 **Cursor**(`.cursor/rules/<name>.mdc`, verify-then-adapt), 프로젝트/사용자 범위 — 에 기록합니다. `APPROVED`+박제된 Skill만 내려가고, pending·drifted·blocked은 표시만 하고 건너뜁니다. 모든 설치는 WORM 감사 로그에 `SKILL_INSTALL_SERVED`로 남습니다. **원격** MCP 서버도 마찬가지인데, 정상 상태(승인 도구 ≥1, blocked·drifted 없음; 거부 자체가 신호)인 서버에만 보증된 연결 설정을 발급해 Claude(`.mcp.json`)·Cursor(`.cursor/mcp.json`)·Codex(`config.toml`)에 설치하고 `MCP_INSTALL_SERVED`로 기록합니다. 바이트가 새 `git clone`이 아니라 Vouchq의 박제 스냅샷에서 나오므로, rug-pull된 업스트림을 다시 끌어오는 일이 없습니다. Vouchq는 신뢰된 아티팩트를 발급할 뿐, 요청 경로에 끼어들지 않습니다.
 
 ### CI 검증 / 빌드 게이트
-소비자 CI를 위한 read-only **빌드 게이트**입니다. [`vouchq-verify` GitHub Action](integrations/github-action/) 이 체크아웃된 레포를 업로드하면, Vouchq가 Skill별로 **현재** 정의가 `APPROVED`+박제된 버전인지 판정하고 `CHANGED` / `BLOCKED` / `UNKNOWN` 이 하나라도 있으면 잡(job)을 실패시킵니다. 배포와 짝을 이뤄 루프를 닫는 셈이죠. 보증된 기능은 **나가는** 길로 흐르고, 미승인·은밀히 바뀐 것은 **들어오는** 길에서 막힙니다. 정체성은 동일한 `definitionHash`이고 권위 있는 파서가 서버에서 계산하니 클라이언트 해시 불일치가 없습니다. Vouchq는 끝까지 레지스트리입니다. 게이트는 또 하나의 reader(`POST /api/verify`, VIEWER+)일 뿐, 에이전트 요청 경로엔 끼지 않습니다.
+소비자 CI를 위한 read-only **빌드 게이트**입니다. [`vouchq-verify` GitHub Action](integrations/github-action/) 이 체크아웃된 레포를 업로드하면, Vouchq가 Skill별로 **현재** 정의가 `APPROVED`+박제된 버전인지 판정하고 `CHANGED` / `BLOCKED` / `UNKNOWN` 이 하나라도 있으면 잡(job)을 실패시킵니다. 배포와 짝을 이뤄 루프를 닫는 셈입니다. 보증된 기능은 **나가는** 길로 흐르고, 미승인·은밀히 바뀐 것은 **들어오는** 길에서 막힙니다. 정체성은 동일한 `definitionHash`이고 권위 있는 파서가 서버에서 계산하니 클라이언트 해시 불일치가 없습니다. Vouchq는 끝까지 레지스트리입니다. 게이트는 또 하나의 reader(`POST /api/verify`, VIEWER+)일 뿐, 에이전트 요청 경로엔 끼지 않습니다.
 
 ### 자가 거버넌스 룰셋 (Sentinel)
-Vouchq는 파는 기준을 자신에게도 똑같이 적용합니다. 스캐너가 오픈소스라 그 룰셋 자체가 공급망 표적입니다. 룰을 슬쩍 약화하는 PR이나 변조된 빌드면 악성 정의가 그냥 통과해 버리죠. 그래서 Vouchq는 봉인된 **카나리 코퍼스**(CRITICAL 룰마다 알려진 악성 픽스처 1개)를 동봉하고, 자기 스캐너를 그 코퍼스에 **기동 시·매시간·CI 게이트**로 계속 돌립니다. 카나리가 하나라도 미탐지되면 룰셋이 약해진 것입니다. 이때 Vouchq는 **DEGRADED** 로 전환해 **fail-closed**(승인 발급 중단 — 자기가 보증 못 할 신뢰는 만들지 않음)하고, WORM 감사에 기록하며, `GET /api/ruleset/health` 로 상태와 룰셋 지문을 보여줍니다. 룰을 약화하면 카나리가 어두워져 반드시 들킵니다.
+Vouchq는 파는 기준을 자신에게도 똑같이 적용합니다. 스캐너가 오픈소스라 그 룰셋 자체가 공급망 표적입니다. 룰을 슬쩍 약화하는 PR이나 변조된 빌드면 악성 정의가 그대로 통과해 버립니다. 그래서 Vouchq는 봉인된 **카나리 코퍼스**(CRITICAL 룰마다 알려진 악성 픽스처 1개)를 동봉하고, 자기 스캐너를 그 코퍼스에 **기동 시·매시간·CI 게이트**로 계속 돌립니다. 카나리가 하나라도 미탐지되면 룰셋이 약해진 것입니다. 이때 Vouchq는 **DEGRADED** 로 전환해 **fail-closed**(승인 발급 중단 — 자기가 보증 못 할 신뢰는 만들지 않음)하고, WORM 감사에 기록하며, `GET /api/ruleset/health` 로 상태와 룰셋 지문을 보여줍니다. 룰을 약화하면 카나리가 어두워져 반드시 들킵니다.
 
 ### 스코프 — first-party로 관측 가능한 것만
 Vouchq는 자신이 **직접(first-party)** 정의를 관측할 수 있는 기능만 거버넌스합니다: Skill의 바이트(레포에서 파싱)와 **원격** MCP 서버의 도구 표면(`tools/list` 로 직접 fetch). 스스로 볼 수 있는 것만 박제하고 검증합니다.
