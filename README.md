@@ -59,10 +59,13 @@ Every register, scan, approve, block, and drift event is written to an **append-
 Spring Security with **Admin / Member / Viewer** roles. All data is isolated by `org_id`, enforced at the query layer, so multiple teams or tenants share one deployment without leaking across boundaries.
 
 ### Distribution / install
-Developers pull only **vouched (approved)** capabilities — never the live upstream. A repo registers many Skills, so the inventory groups them by source and each group gets a one-click **Install** that emits a copy-paste `curl … | sh`: the generated script fetches each approved file from Vouchq (the exact **pinned** bytes), re-verifies its SHA-256 before writing, and drops it into `.claude/skills/`. Only `APPROVED` + pinned skills are served — pending / drifted / blocked are reported and skipped — and every install is recorded on the WORM audit log as `SKILL_INSTALL_SERVED`. **Remote** MCP servers install the same way — a vouched connection config issued **only** for a server in good standing (≥1 approved tool, none blocked or drifted; the refusal is itself the signal), for Claude (`.mcp.json`), Cursor (`.cursor/mcp.json`), or Codex (`config.toml`), recorded as `MCP_INSTALL_SERVED`. Because the bytes come from Vouchq's pinned snapshot rather than a fresh `git clone`, a consumer never re-pulls a rug-pulled upstream. Vouchq issues the trusted artifact; it does not sit inline in the request path.
+Developers pull only **vouched (approved)** capabilities — never the live upstream. A repo registers many Skills, so the inventory groups them by source and each group gets a one-click **Install** that emits a copy-paste `curl … | sh`: the generated script fetches each approved file from Vouchq (the exact **pinned** bytes), re-verifies its SHA-256 before writing, and drops it into your agent's skills directory — **Claude** (`.claude/skills/`) or **Cursor** (`.cursor/rules/<name>.mdc`, verify-then-adapt), in project or user scope. Only `APPROVED` + pinned skills are served — pending / drifted / blocked are reported and skipped — and every install is recorded on the WORM audit log as `SKILL_INSTALL_SERVED`. **Remote** MCP servers install the same way — a vouched connection config issued **only** for a server in good standing (≥1 approved tool, none blocked or drifted; the refusal is itself the signal), for Claude (`.mcp.json`), Cursor (`.cursor/mcp.json`), or Codex (`config.toml`), recorded as `MCP_INSTALL_SERVED`. Because the bytes come from Vouchq's pinned snapshot rather than a fresh `git clone`, a consumer never re-pulls a rug-pulled upstream. Vouchq issues the trusted artifact; it does not sit inline in the request path.
 
 ### CI verify / build gate
 A read-only **build gate** for consumer CI: the [`vouchq-verify` GitHub Action](integrations/github-action/) uploads the checked-out repo, and Vouchq reports — per Skill — whether its **current** definition is an `APPROVED` + pinned version, failing the job on anything `CHANGED` / `BLOCKED` / `UNKNOWN`. This closes the loop with distribution: vouched capabilities flow **out**, and unapproved or silently-changed ones are stopped on the way **in**. Identity is the same `definitionHash`, computed server-side by the authoritative parser, so there's no client-side hash to drift. Vouchq stays a registry — the gate is just another reader (`POST /api/verify`, VIEWER+); it never sits in the agents' request path.
+
+### Self-governing ruleset (Sentinel)
+Vouchq holds itself to the standard it sells. Because the scanner is open source, its rule set is itself a supply-chain target — a PR that quietly weakens a rule, or a tampered build, would let malicious definitions sail through. So Vouchq ships a sealed **canary corpus** (one known-malicious fixture per CRITICAL rule) and continuously runs its own scanner against it — at startup, hourly, and as a **CI gate**. If any canary goes undetected, the rule set has been weakened: Vouchq flips to **DEGRADED** and **fails closed** — approvals are suspended (it won't mint trust it can't stand behind) — records it on the WORM audit log, and exposes the verdict + rule-set fingerprint at `GET /api/ruleset/health`. You cannot neuter detection without a canary going dark.
 
 ### Scope — first-party observation only
 Vouchq governs capabilities whose definition it can observe **first-party**: a Skill's bytes (parsed from the repo) and a **remote** MCP server's tool surface (fetched directly via `tools/list`). It pins and verifies only what it can see for itself.
@@ -111,7 +114,7 @@ wrapper around the cores can't be offered as a closed SaaS). See **[`LICENSING.m
   └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-The app starts as a single Spring Boot deployment unit with clean internal module boundaries (parser, scanner, registry, audit, notify, policy, tenancy). PostgreSQL holds the registry, pinned versions, audit log, suppressions, and policy.
+The app starts as a single Spring Boot deployment unit with clean internal module boundaries (parser, scanner, registry, audit, notify, policy, tenancy). PostgreSQL holds the registry, pinned versions, audit log, suppressions, and policy. Two more readers sit at the edges: a **CI verify gate** lets consumers fail builds on unapproved skills (door in), and **Sentinel** continuously self-tests the scanner's own rule set and fails closed if it's been weakened.
 
 ---
 
@@ -134,6 +137,17 @@ API_PROXY_TARGET=http://localhost:8080 npm run dev
 > The compose files are runtime-agnostic — every command works the same with `docker compose` or `podman compose`.
 
 API docs (OpenAPI / Swagger UI) are served by the backend at `/swagger-ui`.
+
+### Your first few minutes
+
+Once the console is up at `http://localhost:3000`, the whole loop is four steps:
+
+1. **Register a source** — on **Inventory**, paste a Git repo (its Skills) or an MCP server URL. Vouchq parses every capability, risk-scans it, and lists it as `PENDING`.
+2. **Review & approve** — open a capability to read its findings and definition, then **Approve & pin**. Vouchq snapshots the exact bytes as the immutable baseline (정본).
+3. **It keeps watching** — a re-scan compares the live definition to your pin; any change raises a **drift** alert — the rug-pull alarm.
+4. **Distribute & gate** — give developers a one-click **Install** (only approved, pinned bytes), and drop the [`vouchq-verify`](integrations/github-action/) check into CI so builds fail on anything unapproved.
+
+Prefer to just *see* it first? The [90-second rug-pull demo](examples/evil-mcp-rugpull/) runs the whole loop end-to-end with one command.
 
 If you have JDK 21 locally you can use the Gradle wrapper directly:
 
