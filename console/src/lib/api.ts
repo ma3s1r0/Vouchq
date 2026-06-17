@@ -480,6 +480,9 @@ export const api = {
   // Vouched MCP server install config (MA3-110)
   getMcpInstall: (id: string) =>
     get<ApiMcpInstall>(`/tools/${id}/mcp-install`),
+  // Group-level vouched MCP config for a whole source (v1: remote servers)
+  getSourceMcpInstall: (sourceId: string) =>
+    get<ApiMcpInstall>(`/sources/${sourceId}/mcp-install`),
 
   // Members (MA3-93) — ADMIN-only
   getMembers: () =>

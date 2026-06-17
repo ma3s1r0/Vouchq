@@ -51,6 +51,21 @@ public class InstallController {
     }
 
     /**
+     * The vouched MCP connection view for a source's server (v1: remote). The
+     * console renders Claude/Cursor/Codex config snippets from it; a 400 means the
+     * server isn't in good standing (the governance "withheld" signal). Issuing the
+     * config is the distribution moment, so it's recorded on the WORM audit log.
+     */
+    @GetMapping("/api/sources/{id}/mcp-install")
+    public ApiDtos.McpInstallView mcpInstall(@PathVariable UUID id, Authentication authentication) {
+        UUID orgId = currentOrg.require();
+        ApiDtos.McpInstallView view = install.buildMcpInstall(orgId, id);
+        String actor = authentication != null ? authentication.getName() : "system";
+        install.recordMcpInstallServed(orgId, id, actor, view);
+        return view;
+    }
+
+    /**
      * A self-contained POSIX install script with the file plan baked in. Running
      * it fetches each approved file by hash, re-verifies SHA-256 before writing,
      * and refuses on any mismatch. Issuing the script is the "install" moment, so

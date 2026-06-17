@@ -178,6 +178,13 @@ const DICT: Record<string, { en: string; ko: string }> = {
   "install.target": { en: "into", ko: "→ 설치 위치" },
   "install.targetAs": { en: "as", ko: "→" },
   "install.targetLabel": { en: "Install into", ko: "설치 대상 에이전트" },
+  "install.mcpTitle": { en: "Install vouched MCP server", ko: "보증된 MCP 서버 설치" },
+  "install.mcpSubtitle": { en: "Vouched connection config from", ko: "보증된 연결 설정 —" },
+  "install.mergeInto": { en: "Merge into", ko: "병합 대상" },
+  "install.codexGlobalNote": {
+    en: "Codex MCP config is global only (~/.codex/config.toml).",
+    ko: "Codex MCP 설정은 전역 전용입니다 (~/.codex/config.toml).",
+  },
   "install.scopeLabel": { en: "Scope", ko: "설치 범위" },
   "install.scopeProject": { en: "Project", ko: "프로젝트" },
   "install.scopeUser": { en: "User (global)", ko: "사용자(전역)" },

@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -152,6 +153,58 @@ class InstallServiceTest {
             // ok
         }
         verify(auditLog, never()).append(any(), any(), any(), any(), any());
+    }
+
+    /** A clean MCP server with an approved tool → vouched connection view. */
+    @Test
+    void mcpInstallVouchedWhenApprovedAndClean() {
+        UUID server = UUID.randomUUID();
+        when(servers.findByOrgIdAndSourceId(ORG, SOURCE)).thenReturn(List.of(
+                new RegisteredServer(server, ORG, SOURCE, RegisteredServer.Kind.MCP_SERVER, "acme-mcp")));
+        when(tools.findByOrgIdAndServerIdIn(eq(ORG), any())).thenReturn(List.of(
+                new Tool(UUID.randomUUID(), ORG, server, Tool.Kind.MCP_TOOL, "create_issue", Tool.Status.APPROVED),
+                new Tool(UUID.randomUUID(), ORG, server, Tool.Kind.MCP_TOOL, "delete_issue", Tool.Status.PENDING)));
+
+        ApiDtos.McpInstallView v = service.buildMcpInstall(ORG, SOURCE);
+        assertThat(v.name()).isEqualTo("acme-mcp");
+        assertThat(v.approvedTools()).isEqualTo(1);
+        assertThat(v.totalTools()).isEqualTo(2);
+    }
+
+    /** A BLOCKED tool withholds the whole server config (governance signal). */
+    @Test
+    void mcpInstallWithheldWhenBlocked() {
+        UUID server = UUID.randomUUID();
+        when(servers.findByOrgIdAndSourceId(ORG, SOURCE)).thenReturn(List.of(
+                new RegisteredServer(server, ORG, SOURCE, RegisteredServer.Kind.MCP_SERVER, "acme-mcp")));
+        when(tools.findByOrgIdAndServerIdIn(eq(ORG), any())).thenReturn(List.of(
+                new Tool(UUID.randomUUID(), ORG, server, Tool.Kind.MCP_TOOL, "a", Tool.Status.APPROVED),
+                new Tool(UUID.randomUUID(), ORG, server, Tool.Kind.MCP_TOOL, "b", Tool.Status.BLOCKED)));
+
+        assertThatThrownBy(() -> service.buildMcpInstall(ORG, SOURCE))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    /** No approved tools yet → withheld. */
+    @Test
+    void mcpInstallWithheldWhenNoApproved() {
+        UUID server = UUID.randomUUID();
+        when(servers.findByOrgIdAndSourceId(ORG, SOURCE)).thenReturn(List.of(
+                new RegisteredServer(server, ORG, SOURCE, RegisteredServer.Kind.MCP_SERVER, "acme-mcp")));
+        when(tools.findByOrgIdAndServerIdIn(eq(ORG), any())).thenReturn(List.of(
+                new Tool(UUID.randomUUID(), ORG, server, Tool.Kind.MCP_TOOL, "a", Tool.Status.PENDING)));
+
+        assertThatThrownBy(() -> service.buildMcpInstall(ORG, SOURCE))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    /** recordMcpInstallServed appends an MCP_INSTALL_SERVED audit entry. */
+    @Test
+    void recordMcpInstallServedAppendsAudit() {
+        ApiDtos.McpInstallView v = new ApiDtos.McpInstallView(
+                "acme-mcp", "https://mcp.example/v1", 2, 3, OffsetDateTime.now());
+        service.recordMcpInstallServed(ORG, SOURCE, "admin", v);
+        verify(auditLog).append(eq(ORG), eq("admin"), eq("MCP_INSTALL_SERVED"), eq(SOURCE), any());
     }
 
     // SHA-256 of "# alpha".

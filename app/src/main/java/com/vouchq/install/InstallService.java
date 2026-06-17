@@ -150,6 +150,53 @@ public class InstallService {
         auditLog.append(orgId, actor, "SKILL_INSTALL_SERVED", sourceId, payload);
     }
 
+    // ── MCP group install (v1: remote servers) ──
+
+    /**
+     * The vouched connection view for a source's MCP server (remote, v1). Unlike a
+     * Skill, an MCP server isn't bytes we serve — it's a running endpoint, so the
+     * install artifact downstream is a connection config the agent merges. vouchq
+     * only issues it for a server in good standing (≥1 APPROVED tool, none BLOCKED
+     * or DRIFTED); the refusal (400) is itself the governance signal. vouchq is the
+     * issuer, never in the agent↔server data path.
+     */
+    @Transactional(readOnly = true)
+    public ApiDtos.McpInstallView buildMcpInstall(UUID orgId, UUID sourceId) {
+        Source source = sources.findByIdAndOrgId(sourceId, orgId)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown source: " + sourceId));
+
+        RegisteredServer server = servers.findByOrgIdAndSourceId(orgId, sourceId).stream()
+                .filter(s -> s.getKind() == RegisteredServer.Kind.MCP_SERVER)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No MCP server for source: " + sourceId));
+
+        List<Tool> serverTools = tools.findByOrgIdAndServerIdIn(orgId, List.of(server.getId())).stream()
+                .filter(t -> t.getKind() == Tool.Kind.MCP_TOOL)
+                .toList();
+        long approved = serverTools.stream().filter(t -> t.getStatus() == Tool.Status.APPROVED).count();
+        if (serverTools.stream().anyMatch(t -> t.getStatus() == Tool.Status.BLOCKED)) {
+            throw new IllegalArgumentException("MCP server has a BLOCKED tool — not installable");
+        }
+        if (serverTools.stream().anyMatch(t -> t.getStatus() == Tool.Status.DRIFTED)) {
+            throw new IllegalArgumentException("MCP server has unresolved DRIFT — not installable");
+        }
+        if (approved == 0) {
+            throw new IllegalArgumentException("MCP server has no approved tools yet");
+        }
+        return new ApiDtos.McpInstallView(server.getName(), source.getUri(),
+                (int) approved, serverTools.size(), OffsetDateTime.now());
+    }
+
+    /** Record that an MCP connection config was issued for this source (audit parity). */
+    @Transactional
+    public void recordMcpInstallServed(UUID orgId, UUID sourceId, String actor,
+                                       ApiDtos.McpInstallView view) {
+        String payload = "{\"source\":\"" + sourceId + "\",\"server\":\"" + view.name()
+                + "\",\"approvedTools\":" + view.approvedTools()
+                + ",\"totalTools\":" + view.totalTools() + "}";
+        auditLog.append(orgId, actor, "MCP_INSTALL_SERVED", sourceId, payload);
+    }
+
     // ── helpers ──
 
     /** All SKILL tools belonging to a source (across its registered servers). */

@@ -2,8 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { InventoryItem } from "@/lib/mock-inventory";
+import { api, ApiError, type ApiMcpInstall } from "@/lib/api";
 import { useToast } from "@/lib/feedback";
 import { useT } from "@/lib/i18n";
+import {
+  buildMcpConfig,
+  mcpDestFile,
+  mcpScopeAvailable,
+  type McpScope,
+  type McpTarget,
+} from "@/lib/mcp-config";
 
 /** Which agent to install into, and project- vs user-global scope. */
 type Target = "claude" | "cursor";
@@ -51,6 +59,8 @@ export function InstallModal({
   const blocked = skills.filter((i) => i.status === "BLOCKED").length;
   const mcp = group.items.filter((i) => i.kind === "MCP_TOOL").length;
   const excluded = pending + drifted + blocked;
+  // A source is either a Skill repo or an MCP server — branch the whole body.
+  const isMcp = mcp > 0 && skills.length === 0;
 
   // Browser origin works as the API host: the console proxies /api → backend.
   const command = useMemo(() => {
@@ -95,9 +105,11 @@ export function InstallModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="border-b border-border px-5 py-4">
-          <h2 className="text-[15px] font-semibold text-text">{t("install.title")}</h2>
+          <h2 className="text-[15px] font-semibold text-text">
+            {isMcp ? t("install.mcpTitle") : t("install.title")}
+          </h2>
           <p className="mt-1 text-[12.5px] text-muted">
-            {t("install.subtitle")}{" "}
+            {isMcp ? t("install.mcpSubtitle") : t("install.subtitle")}{" "}
             <span className="font-mono text-text">{group.label}</span>
           </p>
         </div>
@@ -105,6 +117,8 @@ export function InstallModal({
         <div className="flex flex-col gap-4 px-5 py-4">
           {!group.sourceId ? (
             <p className="text-[13px] text-warn">{t("install.unresolved")}</p>
+          ) : isMcp ? (
+            <McpInstallBody sourceId={group.sourceId} />
           ) : approved.length === 0 ? (
             <p className="text-[13px] text-dim">{t("install.none")}</p>
           ) : (
@@ -254,5 +268,183 @@ export function InstallModal({
         </div>
       </div>
     </div>
+  );
+}
+
+const MCP_TARGETS: McpTarget[] = ["claude", "cursor", "codex"];
+const MCP_TARGET_LABEL: Record<McpTarget, string> = {
+  claude: "Claude",
+  cursor: "Cursor",
+  codex: "Codex",
+};
+
+/**
+ * MCP group install body (v1: remote servers). An MCP source is one server, so
+ * this issues that server's vouched connection config and renders a per-target,
+ * per-scope, copy-paste snippet to MERGE into the agent's MCP config file. A 400
+ * means the server isn't in good standing — shown as a governance "withheld"
+ * state, not a generic error. vouchq is the issuer, never in the data path.
+ */
+function McpInstallBody({ sourceId }: { sourceId: string }) {
+  const { t } = useT();
+  const toast = useToast();
+  const [target, setTarget] = useState<McpTarget>("claude");
+  const [scope, setScope] = useState<McpScope>("project");
+  const [cfg, setCfg] = useState<ApiMcpInstall | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [withheld, setWithheld] = useState<string | null>(null);
+
+  // Issue once when the modal opens (the GET records the distribution on audit).
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    api
+      .getSourceMcpInstall(sourceId)
+      .then((v) => active && setCfg(v))
+      .catch((e) => {
+        if (!active) return;
+        // 400 = not vouched (no approved tools / blocked / drifted) — the signal.
+        if (e instanceof ApiError && e.status === 400) setWithheld(e.message);
+        else setError(t("install.mcp.error"));
+      })
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [sourceId, t]);
+
+  // Codex MCP config is global only; force user scope there.
+  const pickTarget = (tg: McpTarget) => {
+    setTarget(tg);
+    if (!mcpScopeAvailable(tg, scope)) setScope("user");
+  };
+
+  const destFile = mcpDestFile(target, scope);
+  const snippet = cfg ? buildMcpConfig(cfg, target) : "";
+
+  const copy = async () => {
+    if (!snippet) return;
+    try {
+      await navigator.clipboard.writeText(snippet);
+      toast("success", t("install.copied"));
+    } catch {
+      toast("error", t("install.copyFailed"));
+    }
+  };
+
+  if (loading) return <p className="text-[13px] text-dim">{t("install.mcp.loading")}</p>;
+  if (error) return <p className="text-[13px] text-crit">{error}</p>;
+  if (withheld) {
+    return (
+      <div className="rounded-lg border border-warn/40 bg-warn/[0.07] p-3.5">
+        <div className="flex items-center gap-2 text-[13px] font-semibold text-warn">
+          <span aria-hidden>⚠</span>
+          {t("install.mcp.withheldTitle")}
+        </div>
+        <p className="mt-1.5 text-[12px] leading-relaxed text-muted">
+          {t("install.mcp.withheldDesc")}
+        </p>
+        <p className="mt-1 font-mono text-[12px] text-text">{withheld}</p>
+      </div>
+    );
+  }
+  if (!cfg) return null;
+
+  return (
+    <>
+      {/* target — which agent's MCP config */}
+      <div>
+        <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-dim">
+          {t("install.targetLabel")}
+        </span>
+        <div
+          className="mt-1.5 inline-flex w-full rounded-lg border border-border bg-surface-2 p-0.5 text-[13px] font-semibold"
+          role="group"
+          aria-label={t("install.targetLabel")}
+        >
+          {MCP_TARGETS.map((tg) => (
+            <button
+              key={tg}
+              type="button"
+              onClick={() => pickTarget(tg)}
+              aria-pressed={target === tg}
+              className={`flex-1 rounded-md px-3 py-1.5 transition-colors ${
+                target === tg ? "bg-primary/[0.14] text-[#9DC3FF]" : "text-muted hover:text-text"
+              }`}
+            >
+              {MCP_TARGET_LABEL[tg]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* scope — project vs user/global config file */}
+      <div>
+        <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-dim">
+          {t("install.scopeLabel")}
+        </span>
+        <div
+          className="mt-1.5 inline-flex w-full rounded-lg border border-border bg-surface-2 p-0.5 text-[13px] font-semibold"
+          role="group"
+          aria-label={t("install.scopeLabel")}
+        >
+          {(["project", "user"] as const).map((sc) => {
+            const disabled = !mcpScopeAvailable(target, sc);
+            return (
+              <button
+                key={sc}
+                type="button"
+                disabled={disabled}
+                onClick={() => setScope(sc)}
+                aria-pressed={scope === sc}
+                title={disabled ? t("install.codexGlobalNote") : undefined}
+                className={`flex-1 rounded-md px-3 py-1.5 transition-colors ${
+                  scope === sc && !disabled
+                    ? "bg-primary/[0.14] text-[#9DC3FF]"
+                    : disabled
+                      ? "cursor-not-allowed text-dim/50"
+                      : "text-muted hover:text-text"
+                }`}
+              >
+                {sc === "project" ? t("install.scopeProject") : t("install.scopeUser")}
+              </button>
+            );
+          })}
+        </div>
+        {target === "codex" && (
+          <p className="mt-1 text-[11.5px] text-dim">{t("install.codexGlobalNote")}</p>
+        )}
+      </div>
+
+      {/* vouched summary */}
+      <p className="text-[12.5px] leading-relaxed text-muted">
+        {t("install.mcp.vouchedFor")} <b className="text-text">{cfg.name}</b> —{" "}
+        <span className="text-approved">
+          {cfg.approvedTools}/{cfg.totalTools} {t("install.mcp.toolsApproved")}
+        </span>
+        . {t("install.mcp.addNote")}
+      </p>
+
+      {/* the snippet to merge */}
+      <div>
+        <div className="mb-1.5 flex items-center justify-between">
+          <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-dim">
+            {t("install.mergeInto")} <span className="font-mono normal-case text-text">{destFile}</span>
+          </span>
+          <button
+            type="button"
+            onClick={copy}
+            className="rounded-md border border-border-strong px-2.5 py-1 text-[12px] font-semibold text-text hover:border-primary"
+          >
+            {t("install.copy")}
+          </button>
+        </div>
+        <pre className="max-h-56 overflow-auto rounded-lg border border-border bg-surface-2 px-3 py-2.5 font-mono text-[11.5px] leading-relaxed text-text">
+          {snippet}
+        </pre>
+        <p className="mt-1 text-[11.5px] text-dim">{t("install.mcp.vouchedNote")}</p>
+      </div>
+    </>
   );
 }
