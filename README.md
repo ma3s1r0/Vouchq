@@ -13,6 +13,8 @@
 
 **English** · [한국어](README.ko.md)
 
+> Installs vouched Skills and remote MCP servers straight into **Claude**, **Cursor**, and **Codex**.
+
 ## See it catch a rug-pull
 
 An approved `web_search` tool is pinned. Its upstream server then silently rewrites the

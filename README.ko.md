@@ -13,6 +13,8 @@
 
 [English](README.md) · **한국어**
 
+> 보증된 Skill과 원격 MCP 서버를 **Claude** · **Cursor** · **Codex** 에 그대로 설치합니다.
+
 ## rug-pull 탐지 장면
 
 승인·박제해 둔 `web_search` 툴의 업스트림 서버가 몰래 설명을 바꿔 시크릿을 빼돌립니다.
